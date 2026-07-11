@@ -42,6 +42,17 @@ class CatalogTest extends TestCase
             ->assertJsonPath('data.id', $course->id);
     }
 
+    public function test_catalog_can_be_sorted_by_rating(): void
+    {
+        Course::factory()->published()->create(['title' => 'Low Rated', 'average_rating' => 3.0, 'reviews_count' => 2]);
+        Course::factory()->published()->create(['title' => 'High Rated', 'average_rating' => 4.8, 'reviews_count' => 10]);
+
+        $response = $this->getJson('/api/v1/courses?sort=rating')->assertOk();
+
+        $titles = collect($response->json('data'))->pluck('title');
+        $this->assertSame(['High Rated', 'Low Rated'], $titles->all());
+    }
+
     public function test_curriculum_locks_non_previewable_lesson_content_for_guests(): void
     {
         $course = Course::factory()->published()->create();

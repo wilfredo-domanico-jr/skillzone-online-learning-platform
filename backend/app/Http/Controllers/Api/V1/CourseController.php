@@ -35,9 +35,11 @@ class CourseController extends Controller
             ->when(
                 $request->query('sort') === 'price_asc',
                 fn ($query) => $query->orderBy('price'),
-                fn ($query) => $request->query('sort') === 'price_desc'
-                    ? $query->orderByDesc('price')
-                    : $query->latest('published_at')
+                fn ($query) => match ($request->query('sort')) {
+                    'price_desc' => $query->orderByDesc('price'),
+                    'rating' => $query->orderByDesc('average_rating')->orderByDesc('reviews_count'),
+                    default => $query->latest('published_at'),
+                }
             )
             ->paginate($request->integer('per_page', 12));
 

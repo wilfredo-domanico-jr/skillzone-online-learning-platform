@@ -7,6 +7,7 @@ import { addToCart, fetchCart } from '../../api/commerce';
 import { createReview, deleteReview, fetchReviews, updateReview } from '../../api/reviews';
 import { useAuthUser } from '../auth/useAuth';
 import { generalError } from '../../lib/apiErrors';
+import useDocumentMeta from '../../lib/useDocumentMeta';
 
 export default function CourseDetailPage() {
     const { slug } = useParams();
@@ -18,6 +19,8 @@ export default function CourseDetailPage() {
         queryKey: ['courses', slug],
         queryFn: () => fetchCourse(slug),
     });
+
+    useDocumentMeta(course?.title, course?.subtitle);
 
     const { data: learn } = useQuery({
         queryKey: ['courses', slug, 'curriculum'],
