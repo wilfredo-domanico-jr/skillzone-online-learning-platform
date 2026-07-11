@@ -14,10 +14,12 @@ use App\Http\Controllers\Api\V1\Instructor\CourseController as InstructorCourseC
 use App\Http\Controllers\Api\V1\Instructor\CourseSectionController;
 use App\Http\Controllers\Api\V1\Instructor\LessonContentController;
 use App\Http\Controllers\Api\V1\Instructor\LessonController;
+use App\Http\Controllers\Api\V1\Instructor\QuizController as InstructorQuizController;
 use App\Http\Controllers\Api\V1\InstructorApplicationController;
 use App\Http\Controllers\Api\V1\LearningController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\QuizAttemptController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -54,6 +56,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/lessons/{lesson}/complete', [LearningController::class, 'complete']);
         Route::post('/lessons/{lesson}/progress', [LearningController::class, 'updateProgress']);
 
+        Route::get('/lessons/{lesson}/quiz', [QuizAttemptController::class, 'show']);
+        Route::post('/lessons/{lesson}/quiz/attempts', [QuizAttemptController::class, 'start']);
+        Route::post('/quiz-attempts/{attempt}/submit', [QuizAttemptController::class, 'submit']);
+        Route::get('/quiz-attempts/{attempt}', [QuizAttemptController::class, 'showAttempt']);
+
         Route::get('/cart', [CartController::class, 'index']);
         Route::post('/cart/items', [CartController::class, 'store']);
         Route::delete('/cart/items/{course}', [CartController::class, 'destroy']);
@@ -86,6 +93,13 @@ Route::prefix('v1')->group(function () {
             Route::put('/lessons/{lesson}/article', [LessonContentController::class, 'updateArticle']);
             Route::post('/lessons/{lesson}/attachments', [LessonContentController::class, 'storeAttachment']);
             Route::delete('/attachments/{attachment}', [LessonContentController::class, 'destroyAttachment']);
+
+            Route::get('/lessons/{lesson}/quiz', [InstructorQuizController::class, 'show']);
+            Route::put('/lessons/{lesson}/quiz', [InstructorQuizController::class, 'upsertSettings']);
+            Route::post('/quizzes/{quiz}/questions', [InstructorQuizController::class, 'storeQuestion']);
+            Route::put('/questions/{question}', [InstructorQuizController::class, 'updateQuestion']);
+            Route::delete('/questions/{question}', [InstructorQuizController::class, 'destroyQuestion']);
+            Route::post('/quizzes/{quiz}/questions/reorder', [InstructorQuizController::class, 'reorderQuestions']);
         });
 
         Route::middleware('role:admin')->prefix('admin')->group(function () {

@@ -42,4 +42,9 @@ class Lesson extends Model
     {
         return $this->hasMany(LessonAttachment::class);
     }
+
+    public function quiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class);
+    }
 }

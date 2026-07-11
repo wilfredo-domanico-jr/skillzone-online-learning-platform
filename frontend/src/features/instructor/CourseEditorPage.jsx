@@ -17,6 +17,7 @@ import {
 } from '../../api/instructor';
 import { fetchMyCourses } from '../../api/instructor';
 import { generalError } from '../../lib/apiErrors';
+import QuizBuilder from './QuizBuilder';
 
 function useCourse(courseId) {
     // The instructor courses list endpoint is the simplest way to get a
@@ -277,6 +278,7 @@ function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onCh
                     <option value="article">Article</option>
                     <option value="video">Video</option>
                     <option value="resource">Resource</option>
+                    <option value="quiz">Quiz</option>
                 </select>
                 <button type="submit" className="rounded border px-3 py-1.5 text-sm hover:bg-gray-50">
                     Add lesson
@@ -383,6 +385,7 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
                             soon).
                         </p>
                     )}
+                    {lesson.type === 'quiz' && <QuizBuilder lessonId={lesson.id} />}
                 </div>
             )}
         </li>

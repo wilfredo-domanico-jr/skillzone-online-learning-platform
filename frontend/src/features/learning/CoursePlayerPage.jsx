@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { completeLesson, fetchLearnCurriculum, saveLessonProgress } from '../../api/learning';
+import QuizPlayer from './QuizPlayer';
 
 export default function CoursePlayerPage() {
     const { slug } = useParams();
@@ -84,6 +85,7 @@ export default function CoursePlayerPage() {
                         lesson={activeLesson}
                         onComplete={() => complete.mutate(activeLesson.id)}
                         isCompleting={complete.isPending}
+                        onQuizPassed={invalidate}
                     />
                 ) : (
                     <p className="text-gray-500">This course has no lessons yet.</p>
@@ -93,7 +95,7 @@ export default function CoursePlayerPage() {
     );
 }
 
-function LessonContent({ lesson, onComplete, isCompleting }) {
+function LessonContent({ lesson, onComplete, isCompleting, onQuizPassed }) {
     const videoRef = useRef(null);
     const lastSavedRef = useRef(0);
 
@@ -115,7 +117,7 @@ function LessonContent({ lesson, onComplete, isCompleting }) {
         <div>
             <div className="mb-4 flex items-center justify-between">
                 <h1 className="text-xl font-semibold text-gray-900">{lesson.title}</h1>
-                {!lesson.completed && (
+                {lesson.type !== 'quiz' && !lesson.completed && (
                     <button
                         type="button"
                         onClick={onComplete}
@@ -151,6 +153,8 @@ function LessonContent({ lesson, onComplete, isCompleting }) {
                     dangerouslySetInnerHTML={{ __html: lesson.article.body_html }}
                 />
             )}
+
+            {lesson.type === 'quiz' && <QuizPlayer lessonId={lesson.id} onPassed={onQuizPassed} />}
 
             {lesson.attachments?.length > 0 && (
                 <div className="mt-6">

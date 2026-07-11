@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enrollment;
 use App\Models\Lesson;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -16,21 +18,14 @@ class LearningController extends Controller
      */
     public function complete(Request $request, Lesson $lesson): JsonResponse
     {
-        $enrollment = $this->enrollmentFor($request, $lesson);
-
-        $progress = $enrollment->lessonProgress()->updateOrCreate(
-            ['lesson_id' => $lesson->id],
-            ['completed_at' => now()]
-        );
-
-        $enrollment->recalculateProgress();
+        $enrollment = $this->completeLessonForQuiz($lesson, $request->user());
 
         return response()->json([
             'lesson_id' => $lesson->id,
-            'completed_at' => $progress->completed_at,
+            'completed_at' => $enrollment->lessonProgress()->where('lesson_id', $lesson->id)->value('completed_at'),
             'enrollment' => [
-                'progress_percent' => $enrollment->fresh()->progress_percent,
-                'completed_at' => $enrollment->fresh()->completed_at,
+                'progress_percent' => $enrollment->progress_percent,
+                'completed_at' => $enrollment->completed_at,
             ],
         ]);
     }
@@ -40,7 +35,7 @@ class LearningController extends Controller
      */
     public function updateProgress(Request $request, Lesson $lesson): JsonResponse
     {
-        $enrollment = $this->enrollmentFor($request, $lesson);
+        $enrollment = $this->enrollmentFor($lesson, $request->user());
 
         $data = $request->validate([
             'last_position_seconds' => ['required', 'integer', 'min:0'],
@@ -54,11 +49,30 @@ class LearningController extends Controller
         return response()->json(['message' => 'Progress saved.']);
     }
 
-    private function enrollmentFor(Request $request, Lesson $lesson)
+    /**
+     * Shared core used both by the direct "mark complete" endpoint and by
+     * QuizAttemptController when a passing quiz attempt should complete its
+     * lesson. Returns the freshly-recalculated enrollment.
+     */
+    public function completeLessonForQuiz(Lesson $lesson, User $user): Enrollment
+    {
+        $enrollment = $this->enrollmentFor($lesson, $user);
+
+        $enrollment->lessonProgress()->updateOrCreate(
+            ['lesson_id' => $lesson->id],
+            ['completed_at' => now()]
+        );
+
+        $enrollment->recalculateProgress();
+
+        return $enrollment->fresh();
+    }
+
+    private function enrollmentFor(Lesson $lesson, User $user): Enrollment
     {
         $course = $lesson->section->course;
 
-        $enrollment = $course->enrollments()->where('user_id', $request->user()->id)->first();
+        $enrollment = $course->enrollments()->where('user_id', $user->id)->first();
 
         if (! $enrollment) {
             throw ValidationException::withMessages([
