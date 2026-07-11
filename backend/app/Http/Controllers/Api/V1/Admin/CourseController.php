@@ -6,6 +6,7 @@ use App\Enums\CourseStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
+use App\Notifications\CourseDecided;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -38,6 +39,8 @@ class CourseController extends Controller
             'rejection_reason' => null,
         ]);
 
+        $course->instructor->notify(new CourseDecided($course));
+
         return (new CourseResource($course))->response();
     }
 
@@ -53,6 +56,8 @@ class CourseController extends Controller
             'status' => CourseStatus::Rejected,
             'rejection_reason' => $request->input('rejection_reason'),
         ]);
+
+        $course->instructor->notify(new CourseDecided($course));
 
         return (new CourseResource($course))->response();
     }

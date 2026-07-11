@@ -20,6 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        // Applies to every /api/* request, but is a no-op for guests and
+        // non-suspended users — simplest way to guarantee a suspension takes
+        // effect immediately across all authenticated routes.
+        $middleware->api(append: [
+            \App\Http\Middleware\EnsureUserIsNotSuspended::class,
+        ]);
+
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

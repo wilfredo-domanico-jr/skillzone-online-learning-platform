@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthUser, useLogout } from '../../features/auth/useAuth';
 import { fetchCart } from '../../api/commerce';
+import NotificationBell from '../../components/NotificationBell';
 
 export default function AppLayout() {
     const { data: user, isLoading } = useAuthUser();
@@ -33,9 +34,14 @@ export default function AppLayout() {
                             </Link>
                         )}
                         {isInstructor && (
-                            <Link to="/instructor/courses" className="text-sm text-gray-600 hover:text-gray-900">
-                                My Courses
-                            </Link>
+                            <>
+                                <Link to="/instructor/courses" className="text-sm text-gray-600 hover:text-gray-900">
+                                    My Courses
+                                </Link>
+                                <Link to="/instructor/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
+                                    Dashboard
+                                </Link>
+                            </>
                         )}
                         {isAdmin && (
                             <>
@@ -47,6 +53,12 @@ export default function AppLayout() {
                                 </Link>
                                 <Link to="/admin/courses" className="text-sm text-gray-600 hover:text-gray-900">
                                     Moderation
+                                </Link>
+                                <Link to="/admin/payouts" className="text-sm text-gray-600 hover:text-gray-900">
+                                    Payouts
+                                </Link>
+                                <Link to="/admin/users" className="text-sm text-gray-600 hover:text-gray-900">
+                                    Users
                                 </Link>
                             </>
                         )}
@@ -60,6 +72,7 @@ export default function AppLayout() {
                                 <Link to="/cart" className="hover:text-gray-900">
                                     Cart{cart?.items.length > 0 ? ` (${cart.items.length})` : ''}
                                 </Link>
+                                <NotificationBell />
                                 <span>{user.name}</span>
                                 <button
                                     type="button"

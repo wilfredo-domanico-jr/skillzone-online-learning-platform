@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchCourse } from '../../api/catalog';
 import { enrollInCourse, fetchLearnCurriculum } from '../../api/learning';
 import { addToCart, fetchCart } from '../../api/commerce';
+import { createReview, deleteReview, fetchReviews, updateReview } from '../../api/reviews';
 import { useAuthUser } from '../auth/useAuth';
 import { generalError } from '../../lib/apiErrors';
 
@@ -20,6 +22,12 @@ export default function CourseDetailPage() {
     const { data: learn } = useQuery({
         queryKey: ['courses', slug, 'curriculum'],
         queryFn: () => fetchLearnCurriculum(slug),
+        enabled: !!course,
+    });
+
+    const { data: reviews } = useQuery({
+        queryKey: ['courses', slug, 'reviews'],
+        queryFn: () => fetchReviews(slug),
         enabled: !!course,
     });
 
@@ -41,6 +49,23 @@ export default function CourseDetailPage() {
         },
     });
 
+    const invalidateReviews = () => {
+        queryClient.invalidateQueries({ queryKey: ['courses', slug, 'reviews'] });
+        queryClient.invalidateQueries({ queryKey: ['courses', slug] });
+    };
+    const submitReview = useMutation({
+        mutationFn: ({ id, payload }) => (id ? updateReview(id, payload) : createReview(course.id, payload)),
+        onSuccess: invalidateReviews,
+    });
+    const removeReview = useMutation({
+        mutationFn: (id) => deleteReview(id),
+        onSuccess: invalidateReviews,
+    });
+
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState('');
+    const [editingReview, setEditingReview] = useState(null);
+
     if (isLoading) return <p className="text-gray-500">Loading…</p>;
     if (!course) return <p className="text-gray-500">Course not found.</p>;
 
@@ -48,6 +73,13 @@ export default function CourseDetailPage() {
     const enrollment = learn?.enrollment;
     const isFree = course.price <= 0;
     const isInCart = cart?.items.some((item) => item.course.id === course.id);
+    const myReview = reviews?.data.find((r) => r.user?.id === user?.id);
+
+    const startEditing = (review) => {
+        setEditingReview(review);
+        setRating(review.rating);
+        setComment(review.comment ?? '');
+    };
 
     return (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -57,6 +89,9 @@ export default function CourseDetailPage() {
                 <p className="mt-1 text-sm text-gray-500">
                     By {course.instructor?.name}
                     {course.category && <> · {course.category.name}</>}
+                    {course.reviews_count > 0 && (
+                        <> · ★ {course.average_rating} ({course.reviews_count} review{course.reviews_count === 1 ? '' : 's'})</>
+                    )}
                 </p>
 
                 {course.status !== 'published' && (
@@ -94,6 +129,129 @@ export default function CourseDetailPage() {
                                     </li>
                                 ))}
                             </ul>
+                        </div>
+                    ))}
+                </div>
+
+                <h2 className="mt-8 mb-3 text-lg font-semibold text-gray-900">Reviews</h2>
+
+                {enrollment && !myReview && !editingReview && (
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            submitReview.mutate({ payload: { rating: Number(rating), comment } });
+                            setComment('');
+                        }}
+                        className="mb-4 rounded border bg-white p-4"
+                    >
+                        <label className="block text-sm font-medium text-gray-700">Your rating</label>
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                            className="mt-1 rounded border-gray-300 text-sm shadow-sm"
+                        >
+                            {[5, 4, 3, 2, 1].map((n) => (
+                                <option key={n} value={n}>
+                                    {n} star{n === 1 ? '' : 's'}
+                                </option>
+                            ))}
+                        </select>
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Share your thoughts (optional)…"
+                            rows={3}
+                            className="mt-2 w-full rounded border-gray-300 text-sm shadow-sm"
+                        />
+                        <button
+                            type="submit"
+                            disabled={submitReview.isPending}
+                            className="mt-2 rounded bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-50"
+                        >
+                            Submit review
+                        </button>
+                        {submitReview.isError && (
+                            <p className="mt-2 text-sm text-red-600">{generalError(submitReview.error)}</p>
+                        )}
+                    </form>
+                )}
+
+                {editingReview && (
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            submitReview.mutate(
+                                { id: editingReview.id, payload: { rating: Number(rating), comment } },
+                                { onSuccess: () => setEditingReview(null) }
+                            );
+                        }}
+                        className="mb-4 rounded border bg-white p-4"
+                    >
+                        <label className="block text-sm font-medium text-gray-700">Edit your rating</label>
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                            className="mt-1 rounded border-gray-300 text-sm shadow-sm"
+                        >
+                            {[5, 4, 3, 2, 1].map((n) => (
+                                <option key={n} value={n}>
+                                    {n} star{n === 1 ? '' : 's'}
+                                </option>
+                            ))}
+                        </select>
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            rows={3}
+                            className="mt-2 w-full rounded border-gray-300 text-sm shadow-sm"
+                        />
+                        <div className="mt-2 flex gap-2">
+                            <button
+                                type="submit"
+                                disabled={submitReview.isPending}
+                                className="rounded bg-gray-900 px-4 py-1.5 text-sm text-white disabled:opacity-50"
+                            >
+                                Save changes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setEditingReview(null)}
+                                className="rounded border px-4 py-1.5 text-sm hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                )}
+
+                <div className="space-y-3">
+                    {reviews?.data.length === 0 && <p className="text-sm text-gray-500">No reviews yet.</p>}
+                    {reviews?.data.map((review) => (
+                        <div key={review.id} className="rounded border bg-white p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-gray-900">
+                                    ★ {review.rating} — {review.user?.name}
+                                </p>
+                                {review.user?.id === user?.id && (
+                                    <div className="flex gap-3 text-xs">
+                                        <button
+                                            type="button"
+                                            onClick={() => startEditing(review)}
+                                            className="text-gray-600 hover:underline"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeReview.mutate(review.id)}
+                                            className="text-red-600 hover:underline"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            {review.comment && <p className="mt-1 text-sm text-gray-700">{review.comment}</p>}
                         </div>
                     ))}
                 </div>

@@ -7,6 +7,7 @@ use App\Enums\EnrollmentSource;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EnrollmentResource;
 use App\Models\Course;
+use App\Notifications\NewEnrollment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -63,6 +64,8 @@ class EnrollmentController extends Controller
             'enrolled_at' => now(),
             'progress_percent' => 0,
         ]);
+
+        $course->instructor->notify(new NewEnrollment($enrollment->load('user', 'course')));
 
         return (new EnrollmentResource($enrollment->load('course.category', 'course.instructor')))
             ->response()

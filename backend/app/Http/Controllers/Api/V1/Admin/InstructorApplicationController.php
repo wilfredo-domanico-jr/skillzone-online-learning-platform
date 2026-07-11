@@ -6,6 +6,7 @@ use App\Enums\InstructorApplicationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InstructorApplicationResource;
 use App\Models\InstructorApplication;
+use App\Notifications\InstructorApplicationDecided;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -39,6 +40,7 @@ class InstructorApplicationController extends Controller
         ]);
 
         $instructorApplication->user->assignRole('instructor');
+        $instructorApplication->user->notify(new InstructorApplicationDecided($instructorApplication));
 
         return (new InstructorApplicationResource($instructorApplication->fresh('user')))->response();
     }
@@ -57,6 +59,8 @@ class InstructorApplicationController extends Controller
             'reviewed_by' => $request->user()->id,
             'rejection_reason' => $request->input('rejection_reason'),
         ]);
+
+        $instructorApplication->user->notify(new InstructorApplicationDecided($instructorApplication));
 
         return (new InstructorApplicationResource($instructorApplication->fresh('user')))->response();
     }

@@ -33,6 +33,8 @@ class Course extends Model
         'what_you_will_learn',
         'published_at',
         'rejection_reason',
+        'average_rating',
+        'reviews_count',
     ];
 
     protected function casts(): array
@@ -44,6 +46,7 @@ class Course extends Model
             'requirements' => 'array',
             'what_you_will_learn' => 'array',
             'published_at' => 'datetime',
+            'average_rating' => 'decimal:2',
         ];
     }
 
@@ -90,8 +93,27 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', CourseStatus::Published);
+    }
+
+    /**
+     * Recompute the cached average_rating/reviews_count from the reviews
+     * table. Called from Review's saved/deleted model events rather than on
+     * every catalog read, since ratings change far less often than they're
+     * displayed.
+     */
+    public function recalculateRating(): void
+    {
+        $this->update([
+            'reviews_count' => $this->reviews()->count(),
+            'average_rating' => $this->reviews()->avg('rating'),
+        ]);
     }
 }

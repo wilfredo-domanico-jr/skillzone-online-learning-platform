@@ -15,6 +15,9 @@ import InstructorCoursesPage from '../features/instructor/InstructorCoursesPage'
 import CourseEditorPage from '../features/instructor/CourseEditorPage';
 import ApplicationsQueuePage from '../features/admin/ApplicationsQueuePage';
 import CourseModerationPage from '../features/admin/CourseModerationPage';
+import AdminPayoutsPage from '../features/admin/PayoutsPage';
+import AdminUsersPage from '../features/admin/UsersPage';
+import InstructorDashboardPage from '../features/instructor/InstructorDashboardPage';
 import MyLearningPage from '../features/learning/MyLearningPage';
 import CoursePlayerPage from '../features/learning/CoursePlayerPage';
 import CartPage from '../features/cart/CartPage';
@@ -109,6 +112,14 @@ export const router = createBrowserRouter([
                 ),
             },
             {
+                path: '/instructor/dashboard',
+                element: (
+                    <RequireAuth roles={['instructor']}>
+                        <InstructorDashboardPage />
+                    </RequireAuth>
+                ),
+            },
+            {
                 path: '/admin/instructor-applications',
                 element: (
                     <RequireAuth roles={['admin']}>
@@ -121,6 +132,22 @@ export const router = createBrowserRouter([
                 element: (
                     <RequireAuth roles={['admin']}>
                         <CourseModerationPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: '/admin/payouts',
+                element: (
+                    <RequireAuth roles={['admin']}>
+                        <AdminPayoutsPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: '/admin/users',
+                element: (
+                    <RequireAuth roles={['admin']}>
+                        <AdminUsersPage />
                     </RequireAuth>
                 ),
             },

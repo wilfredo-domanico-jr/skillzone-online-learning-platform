@@ -120,3 +120,14 @@ export async function deleteLessonAttachment(attachmentId) {
     await ensureCsrfCookie();
     await client.delete(`/api/v1/instructor/attachments/${attachmentId}`);
 }
+
+// Analytics & payouts
+export async function fetchAnalyticsOverview() {
+    const { data } = await client.get('/api/v1/instructor/analytics/overview');
+    return data;
+}
+
+export async function fetchMyPayouts(params = {}) {
+    const { data } = await client.get('/api/v1/instructor/payouts', { params });
+    return data;
+}

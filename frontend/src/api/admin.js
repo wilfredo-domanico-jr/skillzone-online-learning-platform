@@ -37,3 +37,33 @@ export async function rejectCourse(id, rejectionReason) {
     });
     return data.data;
 }
+
+// Payouts
+export async function fetchAdminPayouts(params = {}) {
+    const { data } = await client.get('/api/v1/admin/payouts', { params });
+    return data;
+}
+
+export async function markPayoutPaid(id) {
+    await ensureCsrfCookie();
+    const { data } = await client.post(`/api/v1/admin/payouts/${id}/mark-paid`);
+    return data.data;
+}
+
+// Users
+export async function fetchAdminUsers(params = {}) {
+    const { data } = await client.get('/api/v1/admin/users', { params });
+    return data;
+}
+
+export async function suspendUser(id) {
+    await ensureCsrfCookie();
+    const { data } = await client.post(`/api/v1/admin/users/${id}/suspend`);
+    return data.data;
+}
+
+export async function unsuspendUser(id) {
+    await ensureCsrfCookie();
+    const { data } = await client.post(`/api/v1/admin/users/${id}/unsuspend`);
+    return data.data;
+}

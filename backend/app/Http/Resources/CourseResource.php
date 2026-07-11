@@ -23,6 +23,8 @@ class CourseResource extends JsonResource
             'description' => $this->description,
             'thumbnail_url' => $this->thumbnail_path ? Storage::disk('public')->url($this->thumbnail_path) : null,
             'price' => (float) $this->price,
+            'average_rating' => $this->average_rating ? (float) $this->average_rating : null,
+            'reviews_count' => $this->reviews_count,
             'status' => $this->status->value,
             'level' => $this->level->value,
             'language' => $this->language,

@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Enrollment;
 use App\Models\Order;
+use App\Notifications\NewEnrollment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -56,10 +57,14 @@ class StripeWebhookController extends Controller
             ]);
 
             foreach ($order->items as $item) {
-                Enrollment::firstOrCreate(
+                $enrollment = Enrollment::firstOrCreate(
                     ['user_id' => $order->user_id, 'course_id' => $item->course_id],
                     ['source' => EnrollmentSource::Purchase, 'enrolled_at' => now(), 'progress_percent' => 0]
                 );
+
+                if ($enrollment->wasRecentlyCreated) {
+                    $item->course->instructor->notify(new NewEnrollment($enrollment->load('user', 'course')));
+                }
             }
 
             if ($order->coupon_id) {
