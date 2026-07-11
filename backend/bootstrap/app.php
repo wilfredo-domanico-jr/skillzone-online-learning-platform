@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
+
+        // Stripe signs the webhook body itself; it can't submit a CSRF token.
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

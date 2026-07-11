@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Api\V1\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Api\V1\Admin\InstructorApplicationController as AdminInstructorApplicationController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\CheckoutController;
+use App\Http\Controllers\Api\V1\CouponController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\EnrollmentController;
 use App\Http\Controllers\Api\V1\Instructor\CourseController as InstructorCourseController;
@@ -12,6 +16,7 @@ use App\Http\Controllers\Api\V1\Instructor\LessonContentController;
 use App\Http\Controllers\Api\V1\Instructor\LessonController;
 use App\Http\Controllers\Api\V1\InstructorApplicationController;
 use App\Http\Controllers\Api\V1\LearningController;
+use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +54,17 @@ Route::prefix('v1')->group(function () {
         Route::post('/lessons/{lesson}/complete', [LearningController::class, 'complete']);
         Route::post('/lessons/{lesson}/progress', [LearningController::class, 'updateProgress']);
 
+        Route::get('/cart', [CartController::class, 'index']);
+        Route::post('/cart/items', [CartController::class, 'store']);
+        Route::delete('/cart/items/{course}', [CartController::class, 'destroy']);
+
+        Route::post('/coupons/validate', [CouponController::class, 'validate']);
+
+        Route::post('/checkout/session', [CheckoutController::class, 'store']);
+
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::get('/orders/{order}', [OrderController::class, 'show']);
+
         Route::middleware('role:instructor')->prefix('instructor')->group(function () {
             Route::get('/courses', [InstructorCourseController::class, 'index']);
             Route::post('/courses', [InstructorCourseController::class, 'store']);
@@ -80,6 +96,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/courses', [AdminCourseController::class, 'index']);
             Route::post('/courses/{course}/approve', [AdminCourseController::class, 'approve']);
             Route::post('/courses/{course}/reject', [AdminCourseController::class, 'reject']);
+
+            Route::get('/coupons', [AdminCouponController::class, 'index']);
+            Route::post('/coupons', [AdminCouponController::class, 'store']);
+            Route::put('/coupons/{coupon}', [AdminCouponController::class, 'update']);
+            Route::delete('/coupons/{coupon}', [AdminCouponController::class, 'destroy']);
         });
     });
 });

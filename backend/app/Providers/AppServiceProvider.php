@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Vite;
+use App\Contracts\PaymentGateway;
+use App\Services\StripePaymentGateway;
 use Illuminate\Support\ServiceProvider;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(PaymentGateway::class, fn () => new StripePaymentGateway(
+            new StripeClient(config('services.stripe.secret'))
+        ));
     }
 
     /**
@@ -20,6 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Vite::prefetch(concurrency: 3);
+        //
     }
 }

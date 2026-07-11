@@ -17,6 +17,9 @@ import ApplicationsQueuePage from '../features/admin/ApplicationsQueuePage';
 import CourseModerationPage from '../features/admin/CourseModerationPage';
 import MyLearningPage from '../features/learning/MyLearningPage';
 import CoursePlayerPage from '../features/learning/CoursePlayerPage';
+import CartPage from '../features/cart/CartPage';
+import OrdersPage from '../features/orders/OrdersPage';
+import OrderDetailPage from '../features/orders/OrderDetailPage';
 
 export const router = createBrowserRouter([
     {
@@ -54,6 +57,30 @@ export const router = createBrowserRouter([
                 element: (
                     <RequireAuth>
                         <CoursePlayerPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: '/cart',
+                element: (
+                    <RequireAuth>
+                        <CartPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: '/orders',
+                element: (
+                    <RequireAuth>
+                        <OrdersPage />
+                    </RequireAuth>
+                ),
+            },
+            {
+                path: '/orders/:orderId',
+                element: (
+                    <RequireAuth>
+                        <OrderDetailPage />
                     </RequireAuth>
                 ),
             },

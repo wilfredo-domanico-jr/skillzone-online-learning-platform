@@ -1,9 +1,12 @@
 import { Link, Outlet } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthUser, useLogout } from '../../features/auth/useAuth';
+import { fetchCart } from '../../api/commerce';
 
 export default function AppLayout() {
     const { data: user, isLoading } = useAuthUser();
     const logout = useLogout();
+    const { data: cart } = useQuery({ queryKey: ['cart'], queryFn: fetchCart, enabled: !!user });
 
     const isInstructor = user?.roles?.some((r) => r.name === 'instructor');
     const isAdmin = user?.roles?.some((r) => r.name === 'admin');
@@ -51,6 +54,12 @@ export default function AppLayout() {
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                         {!isLoading && user && (
                             <>
+                                <Link to="/orders" className="hover:text-gray-900">
+                                    Orders
+                                </Link>
+                                <Link to="/cart" className="hover:text-gray-900">
+                                    Cart{cart?.items.length > 0 ? ` (${cart.items.length})` : ''}
+                                </Link>
                                 <span>{user.name}</span>
                                 <button
                                     type="button"
