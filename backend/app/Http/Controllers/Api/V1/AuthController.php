@@ -61,6 +61,41 @@ class AuthController extends Controller
     }
 
     /**
+     * Demo-mode only: log in as a seeded demo account for the given role,
+     * no credentials required. 404s (not 403) when demo mode is off, so the
+     * endpoint doesn't advertise itself as a bypass surface in production.
+     */
+    public function demoLogin(Request $request): JsonResponse
+    {
+        abort_unless(config('app.demo_mode'), 404);
+
+        $request->validate([
+            'role' => 'required|in:student,instructor,admin',
+        ]);
+
+        $role = $request->string('role')->toString();
+
+        $user = User::firstOrCreate(
+            ['email' => "demo-{$role}@skillzone.test"],
+            [
+                'name' => 'Demo '.ucfirst($role),
+                'password' => Hash::make(Str::random(32)),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        if (! $user->hasRole($role)) {
+            $user->syncRoles([$role]);
+        }
+
+        Auth::login($user);
+
+        $request->session()->regenerate();
+
+        return response()->json(['user' => $user->fresh()->load('roles')]);
+    }
+
+    /**
      * Destroy the authenticated session.
      */
     public function logout(Request $request): JsonResponse

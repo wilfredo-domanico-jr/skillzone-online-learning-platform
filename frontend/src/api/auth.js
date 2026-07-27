@@ -11,6 +11,12 @@ export async function login({ email, password }) {
     return data.user;
 }
 
+export async function demoLogin(role) {
+    await ensureCsrfCookie();
+    const { data } = await client.post('/api/v1/auth/demo-login', { role });
+    return data.user;
+}
+
 export async function register({ name, email, password, password_confirmation }) {
     await ensureCsrfCookie();
     const { data } = await client.post('/api/v1/auth/register', {

@@ -3,7 +3,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import FormError from '../../components/FormError';
 import { fieldErrors, generalError } from '../../lib/apiErrors';
 import { socialRedirectUrl } from '../../api/auth';
-import { useLogin } from './useAuth';
+import { useDemoLogin, useLogin } from './useAuth';
+
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+const DEMO_ROLES = ['student', 'instructor', 'admin'];
 
 export default function LoginPage() {
     const {
@@ -13,6 +16,7 @@ export default function LoginPage() {
         formState: { errors, isSubmitting },
     } = useForm();
     const login = useLogin();
+    const demoLogin = useDemoLogin();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -32,12 +36,46 @@ export default function LoginPage() {
         }
     };
 
+    const onDemoLogin = async (role) => {
+        try {
+            await demoLogin.mutateAsync(role);
+            navigate('/dashboard', { replace: true });
+        } catch {
+            // surfaced via demoLogin.isError below
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div>
                 <h2 className="font-display text-xl font-semibold text-ink-900">Welcome back</h2>
                 <p className="mt-1 text-sm text-slate-500">Log in to keep learning where you left off.</p>
             </div>
+
+            {DEMO_MODE && (
+                <div className="rounded-xl border border-brand-100 bg-brand-50 p-4">
+                    <p className="text-sm font-semibold text-brand-800">Just exploring?</p>
+                    <p className="mt-1 text-xs text-brand-700">
+                        Jump in instantly as a demo account — no sign-up needed.
+                    </p>
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                        {DEMO_ROLES.map((role) => (
+                            <button
+                                key={role}
+                                type="button"
+                                onClick={() => onDemoLogin(role)}
+                                disabled={demoLogin.isPending}
+                                className="btn-outline !px-2 !py-1.5 !text-xs capitalize"
+                            >
+                                {role}
+                            </button>
+                        ))}
+                    </div>
+                    {demoLogin.isError && (
+                        <FormError message={generalError(demoLogin.error)} />
+                    )}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>

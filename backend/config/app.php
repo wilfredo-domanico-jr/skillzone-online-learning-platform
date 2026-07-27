@@ -81,6 +81,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Demo Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, POST /api/v1/auth/demo-login accepts an unauthenticated
+    | request naming a role (student/instructor/admin) and logs the visitor
+    | in as a seeded demo account for that role — no credentials required.
+    | Off by default; only intended for a public portfolio/demo deployment.
+    |
+    */
+
+    'demo_mode' => (bool) env('DEMO_MODE', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |

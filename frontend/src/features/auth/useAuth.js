@@ -21,6 +21,15 @@ export function useLogin() {
     });
 }
 
+export function useDemoLogin() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: authApi.demoLogin,
+        onSuccess: (user) => queryClient.setQueryData(AUTH_QUERY_KEY, user),
+    });
+}
+
 export function useRegister() {
     const queryClient = useQueryClient();
 
