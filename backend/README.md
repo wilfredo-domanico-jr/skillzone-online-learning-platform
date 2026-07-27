@@ -1,59 +1,79 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SkillZone — Backend (Laravel API)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A JSON API for the SkillZone learning marketplace — no Blade views, no Inertia. Every request/response is JSON under `/api/v1/*`, consumed by the separate React SPA in `../frontend`.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.2+
+- Composer
+- MySQL (dev) — the test suite uses an isolated in-memory SQLite DB regardless, so no separate test database setup is needed
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-## Learning Laravel
+Set your database credentials in `.env` (`DB_CONNECTION=mysql`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) and create the database, then:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+php artisan migrate
+# or, for a clean slate with seed data (roles + categories):
+php artisan migrate:fresh --seed
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`composer install` alone won't set up the frontend — either run the one-shot `composer setup` script (installs backend deps, copies both `.env` files, migrates, and installs frontend deps) or do it manually per the root [`README.md`](../README.md).
 
-## Laravel Sponsors
+## Running it
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer dev
+```
 
-### Premium Partners
+Starts the API server, a queue worker, a log tailer (`php artisan pail`), and the frontend's Vite dev server together in one terminal. Individually:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+php artisan serve                                  # API at http://localhost:8000
+php artisan queue:listen --tries=1 --timeout=0
+php artisan pail --timeout=0                        # live log viewer (requires the pcntl extension)
+npm --prefix ../frontend run dev                    # SPA at http://localhost:5173
+```
 
-## Contributing
+> `php artisan pail` requires the PHP `pcntl` extension, which isn't available on stock Windows PHP builds — if it's missing, just skip that one process and use `php artisan serve` + the Vite dev server directly.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Tests
 
-## Code of Conduct
+```bash
+composer test          # clears config cache, then runs the suite
+php artisan test
+php artisan test --filter=RegistrationTest
+php artisan test tests/Feature/Auth/AuthenticationTest.php
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Test environment config lives inline in `phpunit.xml` (sqlite `:memory:`, array session/cache/mail drivers, sync queue) — no `.env.testing` file needed.
 
-## Security Vulnerabilities
+## Architecture notes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Auth:** Laravel Sanctum's SPA cookie flow (not bearer tokens) — the SPA calls `GET /sanctum/csrf-cookie` before any state-changing request. Google/GitHub OAuth via Socialite, with the redirect/callback routes kept in `routes/web.php` since they need real browser navigation.
+- **Roles:** `spatie/laravel-permission` — `student` / `instructor` / `admin`, seeded via `database/seeders/RoleSeeder.php`.
+- **Commerce:** cart → Stripe Checkout Session → webhook (`POST /webhooks/stripe`) is the source of truth for granting access, not the success-URL redirect. Stripe is wrapped behind `App\Contracts\PaymentGateway` so checkout/webhook logic is unit-testable without real Stripe credentials (tests use `Tests\Fakes\FakePaymentGateway`).
+- **Instructor payouts:** a simple internal ledger (`php artisan payouts:generate`), not Stripe Connect — no real money movement to instructors yet.
+- **Notifications:** Laravel's built-in database notifications, in-app only (no mail/broadcast channel wired up).
+- **File storage:** the `public` disk via the `Storage` facade — run `php artisan storage:link` once so `storage/app/public` is web-reachable at `/storage/*`.
 
-## License
+### Stripe (optional, for real checkout testing)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`STRIPE_SECRET` / `STRIPE_WEBHOOK_SECRET` in `.env` are placeholders by default — checkout will reach Stripe and fail cleanly (order marked `failed`) rather than actually starting a session. To test against real Stripe test-mode:
+
+1. Get test-mode keys from `dashboard.stripe.com/test/apikeys` → set `STRIPE_SECRET`.
+2. Run `stripe listen --forward-to localhost:8000/webhooks/stripe` (Stripe CLI) and put the printed `whsec_...` into `STRIPE_WEBHOOK_SECRET`.
+
+### Known environment quirk
+
+This project has occasionally ended up with more than one stray `php artisan serve` process bound to the same port at once (Windows will allow it, and which process actually answers a request becomes random). If API requests behave unexpectedly, run `netstat -ano | grep :8000` and stop any extra `php.exe` processes, or start on an alternate port with `--port`.
+
+## Full documentation
+
+See the root [`CLAUDE.md`](../CLAUDE.md) for a complete phase-by-phase breakdown of the domain model, controllers, and known gotchas.
