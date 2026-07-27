@@ -8,9 +8,7 @@ export default function GuestLayout() {
                 <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-brand-400/10 blur-3xl" />
 
                 <Link to="/courses" className="relative z-10 flex items-center gap-2">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 font-display text-sm font-bold text-ink-950">
-                        S
-                    </span>
+                    <img src="/logo-icon.png" alt="" className="h-9 w-9" />
                     <span className="font-display text-lg font-semibold text-white">SkillZone</span>
                 </Link>
 
@@ -30,9 +28,7 @@ export default function GuestLayout() {
 
             <div className="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2">
                 <div className="w-full max-w-sm">
-                    <h1 className="mb-8 text-center font-display text-2xl font-semibold text-white lg:hidden">
-                        SkillZone
-                    </h1>
+                    <img src="/logo.png" alt="SkillZone" className="mx-auto mb-8 h-9 w-auto lg:hidden" />
                     <div className="card p-8">
                         <Outlet />
                     </div>

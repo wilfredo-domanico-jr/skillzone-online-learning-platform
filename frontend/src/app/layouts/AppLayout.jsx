@@ -39,9 +39,7 @@ export default function AppLayout() {
                 <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
                     <div className="flex min-w-0 items-center gap-5">
                         <Link to="/courses" className="flex shrink-0 items-center gap-2">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500 font-display text-sm font-bold text-ink-950">
-                                S
-                            </span>
+                            <img src="/logo-icon.png" alt="" className="h-8 w-8" />
                             <span className="hidden font-display text-lg font-semibold text-white sm:inline">
                                 SkillZone
                             </span>
