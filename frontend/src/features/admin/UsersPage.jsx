@@ -20,32 +20,32 @@ export default function UsersPage() {
 
     return (
         <div>
-            <h1 className="mb-6 text-xl font-semibold text-gray-900">Users</h1>
+            <p className="eyebrow">Admin</p>
+            <h1 className="mt-1 font-display text-2xl font-semibold text-ink-900">Users</h1>
+            <p className="mt-1 text-sm text-slate-500">Search users and manage account suspension.</p>
 
             <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name or email…"
-                className="mb-4 w-full max-w-sm rounded border-gray-300 text-sm shadow-sm"
+                className="input mt-6 mb-4 max-w-sm"
             />
 
-            {isLoading && <p className="text-gray-500">Loading…</p>}
+            {isLoading && <p className="text-slate-500">Loading…</p>}
             {suspend.isError && <p className="mb-2 text-sm text-red-600">{generalError(suspend.error)}</p>}
 
-            <div className="divide-y rounded border bg-white">
+            <div className="card divide-y divide-slate-100">
                 {data?.data.map((u) => (
                     <div key={u.id} className="flex items-center justify-between px-4 py-3">
                         <div>
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-ink-900">
                                 {u.name}
                                 {u.suspended_at && (
-                                    <span className="ml-2 rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                                        Suspended
-                                    </span>
+                                    <span className="badge ml-2 bg-red-100 text-red-700">Suspended</span>
                                 )}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-slate-500">
                                 {u.email} · {u.roles?.map((r) => r.name).join(', ') || 'no role'}
                             </p>
                         </div>
@@ -53,7 +53,7 @@ export default function UsersPage() {
                             <button
                                 type="button"
                                 onClick={() => unsuspend.mutate(u.id)}
-                                className="rounded bg-green-600 px-3 py-1.5 text-sm text-white"
+                                className="btn-primary !px-4 !py-2"
                             >
                                 Unsuspend
                             </button>
@@ -62,14 +62,14 @@ export default function UsersPage() {
                                 type="button"
                                 disabled={u.id === me?.id}
                                 onClick={() => suspend.mutate(u.id)}
-                                className="rounded bg-red-600 px-3 py-1.5 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                className="btn-outline !px-4 !py-2 text-red-600 hover:border-red-400 hover:text-red-700"
                             >
                                 Suspend
                             </button>
                         )}
                     </div>
                 ))}
-                {data && data.data.length === 0 && <p className="px-4 py-3 text-sm text-gray-500">No users found.</p>}
+                {data && data.data.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No users found.</p>}
             </div>
         </div>
     );

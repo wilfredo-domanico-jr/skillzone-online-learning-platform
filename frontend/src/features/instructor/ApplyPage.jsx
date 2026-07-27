@@ -46,71 +46,72 @@ export default function ApplyPage() {
     };
 
     if (user?.roles?.some((r) => r.name === 'instructor')) {
-        return <p className="text-gray-700">You're already an approved instructor.</p>;
+        return <p className="text-slate-600">You're already an approved instructor.</p>;
     }
 
-    if (isLoading) return <p className="text-gray-500">Loading…</p>;
+    if (isLoading) return <p className="text-slate-500">Loading…</p>;
 
     if (application && application.status === 'pending') {
         return (
-            <div className="max-w-lg">
-                <h1 className="mb-2 text-xl font-semibold text-gray-900">Application pending</h1>
-                <p className="text-gray-600">
-                    Your instructor application is awaiting review. We'll notify you once it's been decided.
-                </p>
+            <div className="relative max-w-lg overflow-hidden rounded-3xl bg-ink-950 px-8 py-10 md:px-12">
+                <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl" />
+                <div className="relative">
+                    <p className="eyebrow">Instructor application</p>
+                    <h1 className="mt-3 font-display text-2xl font-semibold text-white">Application pending</h1>
+                    <p className="mt-3 text-white/60">
+                        Your instructor application is awaiting review. We'll notify you once it's been decided.
+                    </p>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="max-w-lg">
-            <h1 className="mb-4 text-xl font-semibold text-gray-900">Apply to become an instructor</h1>
+            <div className="relative overflow-hidden rounded-3xl bg-ink-950 px-8 py-10 md:px-12">
+                <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl" />
+                <div className="relative">
+                    <p className="eyebrow">Teach on Learnify</p>
+                    <h1 className="mt-3 font-display text-2xl font-semibold text-white">
+                        Apply to become an instructor
+                    </h1>
+                    <p className="mt-3 text-white/60">Tell us about yourself and we'll review your application.</p>
+                </div>
+            </div>
 
             {application?.status === 'rejected' && (
-                <p className="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">
+                <p className="badge-amber mt-6 block w-fit">
                     Your previous application was rejected
                     {application.rejection_reason && <>: {application.rejection_reason}</>}. You can apply again below.
                 </p>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="card mt-6 space-y-4 p-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Tell us about your teaching/professional background
-                    </label>
+                    <label className="label">Tell us about your teaching/professional background</label>
                     <textarea
                         rows={5}
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
+                        className="input"
                         {...register('bio', { required: true, minLength: 20 })}
                     />
                     <FormError message={errors.bio?.message} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Areas of expertise (comma-separated)
-                    </label>
+                    <label className="label">Areas of expertise (comma-separated)</label>
                     <input
                         type="text"
                         placeholder="React, Laravel, Data Science"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
+                        className="input"
                         {...register('expertise')}
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Portfolio URL (optional)</label>
-                    <input
-                        type="url"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                        {...register('portfolio_url')}
-                    />
+                    <label className="label">Portfolio URL (optional)</label>
+                    <input type="url" className="input" {...register('portfolio_url')} />
                     <FormError message={errors.portfolio_url?.message} />
                 </div>
                 <FormError message={errors.root?.message} />
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="rounded bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
-                >
+                <button type="submit" disabled={isSubmitting} className="btn-primary">
                     Submit application
                 </button>
             </form>

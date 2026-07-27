@@ -1,8 +1,23 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthUser, useLogout } from '../../features/auth/useAuth';
 import { fetchCart } from '../../api/commerce';
 import NotificationBell from '../../components/NotificationBell';
+
+function NavItem({ to, children }) {
+    return (
+        <NavLink
+            to={to}
+            className={({ isActive }) =>
+                `rounded-full px-3.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+                    isActive ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                }`
+            }
+        >
+            {children}
+        </NavLink>
+    );
+}
 
 export default function AppLayout() {
     const { data: user, isLoading } = useAuthUser();
@@ -11,87 +26,97 @@ export default function AppLayout() {
 
     const isInstructor = user?.roles?.some((r) => r.name === 'instructor');
     const isAdmin = user?.roles?.some((r) => r.name === 'admin');
+    const initials = user?.name
+        ?.split(' ')
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <nav className="border-b bg-white">
-                <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-                    <div className="flex items-center gap-6">
-                        <Link to="/courses" className="font-semibold text-gray-900">
-                            Online Learning Platform
+        <div className="min-h-screen bg-slate-50">
+            <nav className="sticky top-0 z-40 border-b border-white/5 bg-ink-950">
+                <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
+                    <div className="flex min-w-0 items-center gap-5">
+                        <Link to="/courses" className="flex shrink-0 items-center gap-2">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500 font-display text-sm font-bold text-ink-950">
+                                O
+                            </span>
+                            <span className="hidden font-display text-lg font-semibold text-white sm:inline">
+                                Learnify
+                            </span>
                         </Link>
-                        <Link to="/courses" className="text-sm text-gray-600 hover:text-gray-900">
-                            Browse
-                        </Link>
-                        {user && (
-                            <Link to="/my-learning" className="text-sm text-gray-600 hover:text-gray-900">
-                                My Learning
-                            </Link>
-                        )}
-                        {user && !isInstructor && (
-                            <Link to="/instructor/apply" className="text-sm text-gray-600 hover:text-gray-900">
-                                Teach
-                            </Link>
-                        )}
-                        {isInstructor && (
-                            <>
-                                <Link to="/instructor/courses" className="text-sm text-gray-600 hover:text-gray-900">
-                                    My Courses
-                                </Link>
-                                <Link to="/instructor/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
-                                    Dashboard
-                                </Link>
-                            </>
-                        )}
-                        {isAdmin && (
-                            <>
-                                <Link
-                                    to="/admin/instructor-applications"
-                                    className="text-sm text-gray-600 hover:text-gray-900"
-                                >
-                                    Applications
-                                </Link>
-                                <Link to="/admin/courses" className="text-sm text-gray-600 hover:text-gray-900">
-                                    Moderation
-                                </Link>
-                                <Link to="/admin/payouts" className="text-sm text-gray-600 hover:text-gray-900">
-                                    Payouts
-                                </Link>
-                                <Link to="/admin/users" className="text-sm text-gray-600 hover:text-gray-900">
-                                    Users
-                                </Link>
-                            </>
-                        )}
+                        <div className="flex items-center gap-1 overflow-x-auto">
+                            <NavItem to="/courses">Browse</NavItem>
+                            {user && <NavItem to="/my-learning">My Learning</NavItem>}
+                            {user && !isInstructor && <NavItem to="/instructor/apply">Teach</NavItem>}
+                            {isInstructor && (
+                                <>
+                                    <NavItem to="/instructor/courses">My Courses</NavItem>
+                                    <NavItem to="/instructor/dashboard">Dashboard</NavItem>
+                                </>
+                            )}
+                            {isAdmin && (
+                                <>
+                                    <NavItem to="/admin/instructor-applications">Applications</NavItem>
+                                    <NavItem to="/admin/courses">Moderation</NavItem>
+                                    <NavItem to="/admin/payouts">Payouts</NavItem>
+                                    <NavItem to="/admin/users">Users</NavItem>
+                                </>
+                            )}
+                        </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex shrink-0 items-center gap-1">
                         {!isLoading && user && (
                             <>
-                                <Link to="/orders" className="hover:text-gray-900">
-                                    Orders
-                                </Link>
-                                <Link to="/cart" className="hover:text-gray-900">
-                                    Cart{cart?.items.length > 0 ? ` (${cart.items.length})` : ''}
-                                </Link>
-                                <NotificationBell />
-                                <span>{user.name}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => logout.mutate()}
-                                    className="text-red-600 hover:underline"
+                                <NavItem to="/orders">Orders</NavItem>
+                                <NavLink
+                                    to="/cart"
+                                    className={({ isActive }) =>
+                                        `relative rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                                            isActive ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                        }`
+                                    }
                                 >
-                                    Log out
-                                </button>
+                                    Cart
+                                    {cart?.items.length > 0 && (
+                                        <span className="ml-1 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold text-ink-950">
+                                            {cart.items.length}
+                                        </span>
+                                    )}
+                                </NavLink>
+                                <NotificationBell />
+                                <div className="ml-2 flex items-center gap-2 border-l border-white/10 pl-3">
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink-700 text-xs font-semibold text-white">
+                                        {initials}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => logout.mutate()}
+                                        className="text-sm font-medium text-white/50 hover:text-white"
+                                    >
+                                        Log out
+                                    </button>
+                                </div>
                             </>
                         )}
                         {!isLoading && !user && (
-                            <Link to="/login" className="text-gray-900 hover:underline">
-                                Log in
-                            </Link>
+                            <>
+                                <Link
+                                    to="/login"
+                                    className="rounded-full px-3.5 py-1.5 text-sm font-medium text-white/70 hover:text-white"
+                                >
+                                    Log in
+                                </Link>
+                                <Link to="/register" className="btn-primary !py-1.5">
+                                    Sign up
+                                </Link>
+                            </>
                         )}
                     </div>
                 </div>
             </nav>
-            <main className="mx-auto max-w-5xl px-4 py-8">
+            <main className="mx-auto max-w-7xl px-6 py-8">
                 <Outlet />
             </main>
         </div>

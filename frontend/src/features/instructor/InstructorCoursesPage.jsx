@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createCourse, fetchMyCourses } from '../../api/instructor';
 
 const STATUS_STYLES = {
-    draft: 'bg-gray-100 text-gray-700',
-    pending_review: 'bg-amber-100 text-amber-800',
-    published: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800',
+    draft: 'badge-slate',
+    pending_review: 'badge-amber',
+    published: 'badge-brand',
+    rejected: 'badge bg-red-100 text-red-700',
 };
 
 export default function InstructorCoursesPage() {
@@ -30,8 +30,15 @@ export default function InstructorCoursesPage() {
 
     return (
         <div>
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-xl font-semibold text-gray-900">My Courses</h1>
+            <div className="relative overflow-hidden rounded-3xl bg-ink-950 px-8 py-10 md:px-12">
+                <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl" />
+                <div className="relative">
+                    <p className="eyebrow">Instructor</p>
+                    <h1 className="mt-3 font-display text-3xl font-semibold text-white">My Courses</h1>
+                    <p className="mt-3 max-w-lg text-white/60">
+                        Manage your curriculum, track review status, and launch new courses.
+                    </p>
+                </div>
             </div>
 
             <form
@@ -39,41 +46,38 @@ export default function InstructorCoursesPage() {
                     e.preventDefault();
                     if (title.trim()) create.mutate({ title });
                 }}
-                className="mb-6 flex gap-2"
+                className="card mt-6 flex flex-col gap-3 p-4 sm:flex-row"
             >
                 <input
                     type="text"
                     placeholder="New course title…"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="flex-1 rounded border-gray-300 shadow-sm"
+                    className="input flex-1"
                 />
-                <button
-                    type="submit"
-                    disabled={create.isPending}
-                    className="rounded bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
-                >
+                <button type="submit" disabled={create.isPending} className="btn-primary shrink-0">
                     Create course
                 </button>
             </form>
 
-            {isLoading && <p className="text-gray-500">Loading…</p>}
+            {isLoading && <p className="mt-6 text-slate-500">Loading…</p>}
 
-            <ul className="divide-y rounded border bg-white">
+            <div className="mt-6 space-y-3">
                 {data?.data.map((course) => (
-                    <li key={course.id} className="flex items-center justify-between px-4 py-3">
-                        <Link to={`/instructor/courses/${course.id}`} className="font-medium text-gray-900 hover:underline">
+                    <div key={course.id} className="card card-hover flex items-center justify-between p-4">
+                        <Link
+                            to={`/instructor/courses/${course.id}`}
+                            className="font-display font-semibold text-ink-900 hover:text-brand-700"
+                        >
                             {course.title}
                         </Link>
-                        <span className={`rounded px-2 py-1 text-xs font-medium ${STATUS_STYLES[course.status]}`}>
-                            {course.status.replace('_', ' ')}
-                        </span>
-                    </li>
+                        <span className={STATUS_STYLES[course.status]}>{course.status.replace('_', ' ')}</span>
+                    </div>
                 ))}
                 {data && data.data.length === 0 && (
-                    <li className="px-4 py-3 text-gray-500">No courses yet — create your first one above.</li>
+                    <p className="card p-4 text-slate-500">No courses yet — create your first one above.</p>
                 )}
-            </ul>
+            </div>
         </div>
     );
 }

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { fetchOrders } from '../../api/commerce';
 
 const STATUS_STYLES = {
-    pending: 'bg-amber-100 text-amber-800',
-    paid: 'bg-green-100 text-green-800',
-    failed: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-700',
+    pending: 'badge-amber',
+    paid: 'badge-brand',
+    failed: 'badge bg-red-100 text-red-700',
+    refunded: 'badge-slate',
 };
 
 export default function OrdersPage() {
@@ -14,26 +14,27 @@ export default function OrdersPage() {
 
     return (
         <div>
-            <h1 className="mb-6 text-xl font-semibold text-gray-900">Order History</h1>
+            <h1 className="mb-6 font-display text-2xl font-semibold text-ink-900">Order History</h1>
 
-            {isLoading && <p className="text-gray-500">Loading…</p>}
-            {data && data.data.length === 0 && <p className="text-gray-500">No orders yet.</p>}
+            {isLoading && <p className="text-slate-500">Loading…</p>}
+            {data && data.data.length === 0 && <p className="text-slate-500">No orders yet.</p>}
 
-            <ul className="divide-y rounded border bg-white">
+            <ul className="space-y-3">
                 {data?.data.map((order) => (
                     <li key={order.id}>
-                        <Link to={`/orders/${order.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+                        <Link
+                            to={`/orders/${order.id}`}
+                            className="card card-hover flex items-center justify-between px-5 py-4"
+                        >
                             <div>
-                                <p className="text-sm text-gray-900">Order #{order.id}</p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-sm font-semibold text-ink-900">Order #{order.id}</p>
+                                <p className="text-xs text-slate-500">
                                     {order.items.map((i) => i.course.title).join(', ')}
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-sm text-gray-700">${order.total.toFixed(2)}</span>
-                                <span className={`rounded px-2 py-1 text-xs font-medium ${STATUS_STYLES[order.status]}`}>
-                                    {order.status}
-                                </span>
+                                <span className="text-sm text-slate-600">${order.total.toFixed(2)}</span>
+                                <span className={STATUS_STYLES[order.status]}>{order.status}</span>
                             </div>
                         </Link>
                     </li>

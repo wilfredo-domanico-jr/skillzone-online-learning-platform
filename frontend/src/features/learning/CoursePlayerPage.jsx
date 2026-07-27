@@ -29,7 +29,7 @@ export default function CoursePlayerPage() {
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['courses', slug, 'curriculum'] });
     const complete = useMutation({ mutationFn: completeLesson, onSuccess: invalidate });
 
-    if (isLoading) return <p className="text-gray-500">Loading…</p>;
+    if (isLoading) return <p className="text-slate-500">Loading…</p>;
     if (!data?.enrollment) {
         return <Navigate to={`/courses/${slug}`} replace />;
     }
@@ -38,23 +38,26 @@ export default function CoursePlayerPage() {
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-            <aside className="rounded border bg-white lg:col-span-1">
-                <div className="border-b px-4 py-3">
-                    <Link to={`/courses/${slug}`} className="text-sm text-gray-500 hover:underline">
+            <aside className="card overflow-hidden lg:col-span-1">
+                <div className="border-b border-slate-100 px-4 py-3">
+                    <Link
+                        to={`/courses/${slug}`}
+                        className="text-sm text-slate-500 hover:text-brand-700 hover:underline"
+                    >
                         ← {data.course.title}
                     </Link>
-                    <div className="mt-2 h-2 w-full rounded-full bg-gray-100">
+                    <div className="mt-2 h-2 w-full rounded-full bg-slate-100">
                         <div
-                            className="h-2 rounded-full bg-gray-900"
+                            className="h-2 rounded-full bg-brand-500"
                             style={{ width: `${data.enrollment.progress_percent}%` }}
                         />
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">{data.enrollment.progress_percent}% complete</p>
+                    <p className="mt-1 text-xs text-slate-500">{data.enrollment.progress_percent}% complete</p>
                 </div>
                 <div className="max-h-[70vh] overflow-y-auto">
                     {data.course.sections.map((section) => (
                         <div key={section.id}>
-                            <div className="bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700">
+                            <div className="bg-slate-50 px-4 py-2 text-sm font-semibold text-ink-900">
                                 {section.title}
                             </div>
                             <ul>
@@ -63,12 +66,16 @@ export default function CoursePlayerPage() {
                                         <button
                                             type="button"
                                             onClick={() => setActiveLessonId(lesson.id)}
-                                            className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-gray-50 ${
-                                                lesson.id === activeLessonId ? 'bg-gray-100 font-medium' : ''
+                                            className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors hover:bg-brand-50 ${
+                                                lesson.id === activeLessonId
+                                                    ? 'bg-brand-50 font-medium text-brand-700'
+                                                    : 'text-slate-600'
                                             }`}
                                         >
-                                            <span>{lesson.completed ? '✅' : '⬜'}</span>
-                                            <span className="text-gray-700">{lesson.title}</span>
+                                            <span className={lesson.completed ? 'text-brand-500' : 'text-slate-300'}>
+                                                {lesson.completed ? '✓' : '○'}
+                                            </span>
+                                            <span>{lesson.title}</span>
                                         </button>
                                     </li>
                                 ))}
@@ -78,7 +85,7 @@ export default function CoursePlayerPage() {
                 </div>
             </aside>
 
-            <main className="rounded border bg-white p-6 lg:col-span-3">
+            <main className="card p-6 lg:col-span-3">
                 {activeLesson ? (
                     <LessonContent
                         key={activeLesson.id}
@@ -88,7 +95,7 @@ export default function CoursePlayerPage() {
                         onQuizPassed={invalidate}
                     />
                 ) : (
-                    <p className="text-gray-500">This course has no lessons yet.</p>
+                    <p className="text-slate-500">This course has no lessons yet.</p>
                 )}
             </main>
         </div>
@@ -116,22 +123,17 @@ function LessonContent({ lesson, onComplete, isCompleting, onQuizPassed }) {
     return (
         <div>
             <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-xl font-semibold text-gray-900">{lesson.title}</h1>
+                <h1 className="font-display text-xl font-semibold text-ink-900">{lesson.title}</h1>
                 {lesson.type !== 'quiz' && !lesson.completed && (
-                    <button
-                        type="button"
-                        onClick={onComplete}
-                        disabled={isCompleting}
-                        className="rounded bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-                    >
+                    <button type="button" onClick={onComplete} disabled={isCompleting} className="btn-primary">
                         Mark complete
                     </button>
                 )}
-                {lesson.completed && <span className="text-sm text-green-600">✅ Completed</span>}
+                {lesson.completed && <span className="badge-brand">✓ Completed</span>}
             </div>
 
             {lesson.locked && (
-                <p className="rounded bg-amber-50 p-3 text-sm text-amber-800">
+                <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
                     This lesson's content isn't available. Try refreshing — your enrollment may not have loaded yet.
                 </p>
             )}
@@ -143,26 +145,28 @@ function LessonContent({ lesson, onComplete, isCompleting, onQuizPassed }) {
                     controls
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={onComplete}
-                    className="w-full rounded"
+                    className="w-full rounded-xl"
                 />
             )}
 
             {lesson.type === 'article' && lesson.article && (
-                <div
-                    className="prose max-w-none"
-                    dangerouslySetInnerHTML={{ __html: lesson.article.body_html }}
-                />
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.article.body_html }} />
             )}
 
             {lesson.type === 'quiz' && <QuizPlayer lessonId={lesson.id} onPassed={onQuizPassed} />}
 
             {lesson.attachments?.length > 0 && (
                 <div className="mt-6">
-                    <h2 className="mb-2 text-sm font-medium text-gray-900">Resources</h2>
+                    <h2 className="mb-2 text-sm font-semibold text-ink-900">Resources</h2>
                     <ul className="space-y-1">
                         {lesson.attachments.map((a) => (
                             <li key={a.id}>
-                                <a href={a.url} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline">
+                                <a
+                                    href={a.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-sm font-medium text-brand-600 hover:underline"
+                                >
                                     📎 {a.file_name}
                                 </a>
                             </li>

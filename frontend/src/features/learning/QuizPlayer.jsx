@@ -40,9 +40,9 @@ export default function QuizPlayer({ lessonId, onPassed }) {
         },
     });
 
-    if (isLoading) return <p className="text-sm text-gray-500">Loading quiz…</p>;
+    if (isLoading) return <p className="text-sm text-slate-500">Loading quiz…</p>;
     if (!data?.quiz || data.quiz.questions.length === 0) {
-        return <p className="text-sm text-gray-500">This quiz has no questions yet.</p>;
+        return <p className="text-sm text-slate-500">This quiz has no questions yet.</p>;
     }
 
     const toggleAnswer = (question, answerId) => {
@@ -63,7 +63,11 @@ export default function QuizPlayer({ lessonId, onPassed }) {
     if (result) {
         return (
             <div>
-                <div className={`mb-4 rounded p-3 text-sm ${result.passed ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                <div
+                    className={`mb-4 rounded-xl p-3 text-sm ${
+                        result.passed ? 'bg-brand-50 text-brand-700' : 'bg-red-50 text-red-700'
+                    }`}
+                >
                     {result.passed ? '🎉 You passed!' : "You didn't pass this time."} Score: {result.score_percent}%
                 </div>
                 <ReviewAnswers quiz={data.quiz} result={result} />
@@ -76,14 +80,17 @@ export default function QuizPlayer({ lessonId, onPassed }) {
         return (
             <div>
                 {data.passed && (
-                    <p className="mb-3 rounded bg-green-50 p-3 text-sm text-green-800">
+                    <p className="mb-3 rounded-xl bg-brand-50 p-3 text-sm text-brand-700">
                         You've already passed this quiz (best score: {data.best_score_percent}%).
                     </p>
                 )}
-                <p className="mb-3 text-sm text-gray-600">
+                <p className="mb-3 text-sm text-slate-600">
                     {data.quiz.questions.length} question(s) · Passing score: {data.quiz.passing_score_percent}%
                     {data.quiz.max_attempts && (
-                        <> · Attempts: {data.attempts_used}/{data.quiz.max_attempts}</>
+                        <>
+                            {' '}
+                            · Attempts: {data.attempts_used}/{data.quiz.max_attempts}
+                        </>
                     )}
                 </p>
                 <RetakeControls data={data} onRetake={() => start.mutate()} pending={start.isPending} />
@@ -93,20 +100,21 @@ export default function QuizPlayer({ lessonId, onPassed }) {
     }
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-4">
             {data.quiz.questions.map((question, index) => (
-                <div key={question.id}>
-                    <p className="mb-2 text-sm font-medium text-gray-900">
+                <div key={question.id} className="card p-4">
+                    <p className="mb-2 text-sm font-semibold text-ink-900">
                         {index + 1}. {question.question_text}
                     </p>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                         {question.answers.map((answer) => (
-                            <label key={answer.id} className="flex items-center gap-2 text-sm text-gray-700">
+                            <label key={answer.id} className="flex items-center gap-2 text-sm text-slate-600">
                                 <input
                                     type={question.type === 'multiple_choice' ? 'checkbox' : 'radio'}
                                     name={`question-${question.id}`}
                                     checked={(selections[question.id] ?? []).includes(answer.id)}
                                     onChange={() => toggleAnswer(question, answer.id)}
+                                    className="accent-brand-500"
                                 />
                                 {answer.answer_text}
                             </label>
@@ -115,12 +123,7 @@ export default function QuizPlayer({ lessonId, onPassed }) {
                 </div>
             ))}
 
-            <button
-                type="button"
-                onClick={() => submit.mutate()}
-                disabled={submit.isPending}
-                className="rounded bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-            >
+            <button type="button" onClick={() => submit.mutate()} disabled={submit.isPending} className="btn-primary">
                 Submit quiz
             </button>
             {submit.isError && <p className="mt-2 text-sm text-red-600">{generalError(submit.error)}</p>}
@@ -132,12 +135,7 @@ function RetakeControls({ data, onRetake, pending }) {
     const exhausted = data.attempts_remaining === 0;
 
     return (
-        <button
-            type="button"
-            onClick={onRetake}
-            disabled={pending || exhausted}
-            className="rounded bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-        >
+        <button type="button" onClick={onRetake} disabled={pending || exhausted} className="btn-primary">
             {exhausted ? 'No attempts remaining' : data.attempts_used > 0 ? 'Retake quiz' : 'Start quiz'}
         </button>
     );
@@ -151,19 +149,19 @@ function ReviewAnswers({ quiz, result }) {
             {quiz.questions.map((question, index) => {
                 const answer = byQuestion[question.id];
                 return (
-                    <div key={question.id} className="rounded border p-3 text-sm">
-                        <p className="font-medium text-gray-900">
+                    <div key={question.id} className="card p-4 text-sm">
+                        <p className="font-semibold text-ink-900">
                             {index + 1}. {question.question_text}{' '}
-                            <span className={answer?.is_correct ? 'text-green-600' : 'text-red-600'}>
+                            <span className={answer?.is_correct ? 'text-brand-600' : 'text-red-600'}>
                                 {answer?.is_correct ? '✓' : '✗'}
                             </span>
                         </p>
-                        <ul className="mt-1 space-y-0.5 text-xs text-gray-600">
+                        <ul className="mt-1 space-y-0.5 text-xs text-slate-600">
                             {question.answers.map((option) => (
                                 <li key={option.id}>
                                     {option.answer_text}
                                     {answer?.correct_answer_ids?.includes(option.id) && (
-                                        <span className="text-green-600"> (correct)</span>
+                                        <span className="text-brand-600"> (correct)</span>
                                     )}
                                     {answer?.selected_answer_ids?.includes(option.id) &&
                                         !answer?.correct_answer_ids?.includes(option.id) && (

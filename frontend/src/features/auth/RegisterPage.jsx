@@ -32,58 +32,45 @@ export default function RegisterPage() {
 
     return (
         <div className="space-y-6">
+            <div>
+                <h2 className="font-display text-xl font-semibold text-ink-900">Create your account</h2>
+                <p className="mt-1 text-sm text-slate-500">Start learning in minutes — it's free to join.</p>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Name</label>
-                    <input
-                        type="text"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                        {...register('name', { required: true })}
-                    />
+                    <label className="label">Name</label>
+                    <input type="text" className="input" {...register('name', { required: true })} />
                     <FormError message={errors.name?.message} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                    <input
-                        type="email"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                        {...register('email', { required: true })}
-                    />
+                    <label className="label">Email</label>
+                    <input type="email" className="input" {...register('email', { required: true })} />
                     <FormError message={errors.email?.message} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <input
-                        type="password"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                        {...register('password', { required: true })}
-                    />
+                    <label className="label">Password</label>
+                    <input type="password" className="input" {...register('password', { required: true })} />
                     <FormError message={errors.password?.message} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Confirm password
-                    </label>
+                    <label className="label">Confirm password</label>
                     <input
                         type="password"
-                        className="mt-1 w-full rounded border-gray-300 shadow-sm"
+                        className="input"
                         {...register('password_confirmation', { required: true })}
                     />
                     <FormError message={errors.password_confirmation?.message} />
                 </div>
                 <FormError message={errors.root?.message} />
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full rounded bg-gray-900 py-2 text-white disabled:opacity-50"
-                >
-                    Register
+                <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
+                    Create account
                 </button>
             </form>
 
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-slate-500">
                 Already have an account?{' '}
-                <Link to="/login" className="text-gray-900 underline">
+                <Link to="/login" className="font-medium text-brand-600 hover:underline">
                     Log in
                 </Link>
             </p>

@@ -42,40 +42,40 @@ export default function QuizBuilder({ lessonId }) {
         onSuccess: invalidate,
     });
 
-    if (isLoading) return <p className="text-xs text-gray-500">Loading quiz…</p>;
+    if (isLoading) return <p className="text-xs text-slate-500">Loading quiz…</p>;
 
     return (
         <div className="space-y-4 text-sm">
-            <div className="flex flex-wrap items-end gap-3">
+            <div className="card flex flex-wrap items-end gap-3 p-3">
                 <div>
-                    <label className="block text-xs text-gray-600">Passing score (%)</label>
+                    <label className="mb-1 block text-xs font-medium text-ink-700">Passing score (%)</label>
                     <input
                         type="number"
                         min="1"
                         max="100"
-                        className="mt-1 w-24 rounded border-gray-300 text-sm shadow-sm"
+                        className="input w-24 !text-sm"
                         value={activeSettings.passing_score_percent}
                         onChange={(e) => setSettings({ ...activeSettings, passing_score_percent: e.target.value })}
                     />
                 </div>
                 <div>
-                    <label className="block text-xs text-gray-600">Max attempts</label>
+                    <label className="mb-1 block text-xs font-medium text-ink-700">Max attempts</label>
                     <input
                         type="number"
                         min="1"
                         placeholder="Unlimited"
-                        className="mt-1 w-24 rounded border-gray-300 text-sm shadow-sm"
+                        className="input w-24 !text-sm"
                         value={activeSettings.max_attempts}
                         onChange={(e) => setSettings({ ...activeSettings, max_attempts: e.target.value })}
                     />
                 </div>
                 <div>
-                    <label className="block text-xs text-gray-600">Time limit (min)</label>
+                    <label className="mb-1 block text-xs font-medium text-ink-700">Time limit (min)</label>
                     <input
                         type="number"
                         min="1"
                         placeholder="None"
-                        className="mt-1 w-24 rounded border-gray-300 text-sm shadow-sm"
+                        className="input w-24 !text-sm"
                         value={activeSettings.time_limit_minutes}
                         onChange={(e) => setSettings({ ...activeSettings, time_limit_minutes: e.target.value })}
                     />
@@ -84,14 +84,14 @@ export default function QuizBuilder({ lessonId }) {
                     type="button"
                     onClick={() => saveSettings.mutate()}
                     disabled={saveSettings.isPending}
-                    className="rounded bg-gray-900 px-3 py-1.5 text-xs text-white disabled:opacity-50"
+                    className="btn-dark !px-3 !py-1.5 !text-xs"
                 >
                     Save settings
                 </button>
             </div>
 
             {!quiz ? (
-                <p className="text-xs text-gray-500">Save settings above to create the quiz, then add questions.</p>
+                <p className="text-xs text-slate-500">Save settings above to create the quiz, then add questions.</p>
             ) : (
                 <>
                     <div className="space-y-3">
@@ -144,15 +144,15 @@ function QuestionEditor({ question, onSave, onDelete }) {
     };
 
     return (
-        <div className="rounded border p-3">
+        <div className="card p-3">
             {!editing ? (
                 <div className="flex items-start justify-between">
                     <div>
-                        <p className="font-medium text-gray-900">{question.question_text}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="font-medium text-ink-900">{question.question_text}</p>
+                        <p className="text-xs text-slate-500">
                             {question.type.replace('_', ' ')} · {question.points} pt(s)
                         </p>
-                        <ul className="mt-1 list-inside list-disc text-xs text-gray-600">
+                        <ul className="mt-1 list-inside list-disc text-xs text-slate-600">
                             {question.answers.map((a) => (
                                 <li key={a.id}>
                                     {a.answer_text} {a.is_correct ? '✓' : ''}
@@ -161,10 +161,14 @@ function QuestionEditor({ question, onSave, onDelete }) {
                         </ul>
                     </div>
                     <div className="flex gap-2 text-xs">
-                        <button type="button" onClick={() => setEditing(true)} className="text-blue-600 hover:underline">
+                        <button
+                            type="button"
+                            onClick={() => setEditing(true)}
+                            className="font-medium text-brand-600 hover:underline"
+                        >
                             Edit
                         </button>
-                        <button type="button" onClick={onDelete} className="text-red-600 hover:underline">
+                        <button type="button" onClick={onDelete} className="font-medium text-red-600 hover:underline">
                             Delete
                         </button>
                     </div>
@@ -172,12 +176,12 @@ function QuestionEditor({ question, onSave, onDelete }) {
             ) : (
                 <div className="space-y-2">
                     <textarea
-                        className="w-full rounded border-gray-300 text-sm shadow-sm"
+                        className="input !text-sm"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                     />
                     <select
-                        className="rounded border-gray-300 text-sm shadow-sm"
+                        className="input w-auto !text-sm"
                         value={type}
                         onChange={(e) => {
                             setType(e.target.value);
@@ -195,9 +199,10 @@ function QuestionEditor({ question, onSave, onDelete }) {
                                 type={type === 'multiple_choice' ? 'checkbox' : 'radio'}
                                 checked={answer.is_correct}
                                 onChange={() => toggleCorrect(index)}
+                                className="accent-brand-500"
                             />
                             <input
-                                className="flex-1 rounded border-gray-300 text-sm shadow-sm"
+                                className="input flex-1 !text-sm"
                                 value={answer.answer_text}
                                 disabled={type === 'true_false'}
                                 onChange={(e) =>
@@ -221,7 +226,7 @@ function QuestionEditor({ question, onSave, onDelete }) {
                         <button
                             type="button"
                             onClick={() => setAnswers((prev) => [...prev, { answer_text: '', is_correct: false }])}
-                            className="text-xs text-gray-600 hover:underline"
+                            className="text-xs font-medium text-slate-600 hover:underline"
                         >
                             + Add option
                         </button>
@@ -234,11 +239,15 @@ function QuestionEditor({ question, onSave, onDelete }) {
                                 onSave({ question_text: text, type, answers });
                                 setEditing(false);
                             }}
-                            className="rounded bg-gray-900 px-3 py-1.5 text-xs text-white"
+                            className="btn-dark !px-3 !py-1.5 !text-xs"
                         >
                             Save question
                         </button>
-                        <button type="button" onClick={() => setEditing(false)} className="text-xs text-gray-600">
+                        <button
+                            type="button"
+                            onClick={() => setEditing(false)}
+                            className="text-xs font-medium text-slate-600 hover:text-ink-900"
+                        >
                             Cancel
                         </button>
                     </div>
@@ -256,7 +265,11 @@ function NewQuestionForm({ onCreate }) {
 
     if (!adding) {
         return (
-            <button type="button" onClick={() => setAdding(true)} className="text-xs text-gray-600 hover:underline">
+            <button
+                type="button"
+                onClick={() => setAdding(true)}
+                className="text-xs font-medium text-brand-600 hover:underline"
+            >
                 + Add question
             </button>
         );
@@ -279,15 +292,15 @@ function NewQuestionForm({ onCreate }) {
     };
 
     return (
-        <div className="space-y-2 rounded border border-dashed p-3">
+        <div className="space-y-2 rounded-2xl border border-dashed border-slate-300 p-3">
             <textarea
                 placeholder="Question text…"
-                className="w-full rounded border-gray-300 text-sm shadow-sm"
+                className="input !text-sm"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
             <select
-                className="rounded border-gray-300 text-sm shadow-sm"
+                className="input w-auto !text-sm"
                 value={type}
                 onChange={(e) => {
                     setType(e.target.value);
@@ -305,9 +318,10 @@ function NewQuestionForm({ onCreate }) {
                         type={type === 'multiple_choice' ? 'checkbox' : 'radio'}
                         checked={answer.is_correct}
                         onChange={() => toggleCorrect(index)}
+                        className="accent-brand-500"
                     />
                     <input
-                        className="flex-1 rounded border-gray-300 text-sm shadow-sm"
+                        className="input flex-1 !text-sm"
                         value={answer.answer_text}
                         disabled={type === 'true_false'}
                         onChange={(e) =>
@@ -329,7 +343,7 @@ function NewQuestionForm({ onCreate }) {
                 <button
                     type="button"
                     onClick={() => setAnswers((prev) => [...prev, { answer_text: '', is_correct: false }])}
-                    className="text-xs text-gray-600 hover:underline"
+                    className="text-xs font-medium text-slate-600 hover:underline"
                 >
                     + Add option
                 </button>
@@ -342,11 +356,15 @@ function NewQuestionForm({ onCreate }) {
                         onCreate({ question_text: text, type, answers });
                         reset();
                     }}
-                    className="rounded bg-gray-900 px-3 py-1.5 text-xs text-white"
+                    className="btn-dark !px-3 !py-1.5 !text-xs"
                 >
                     Add question
                 </button>
-                <button type="button" onClick={reset} className="text-xs text-gray-600">
+                <button
+                    type="button"
+                    onClick={reset}
+                    className="text-xs font-medium text-slate-600 hover:text-ink-900"
+                >
                     Cancel
                 </button>
             </div>
