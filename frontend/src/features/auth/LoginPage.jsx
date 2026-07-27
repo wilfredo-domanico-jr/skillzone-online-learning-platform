@@ -67,8 +67,8 @@ export default function LoginPage() {
                 <a href={socialRedirectUrl('google')} className="btn-outline w-full">
                     Continue with Google
                 </a>
-                <a href={socialRedirectUrl('github')} className="btn-outline w-full">
-                    Continue with GitHub
+                <a href={socialRedirectUrl('facebook')} className="btn-outline w-full">
+                    Continue with Facebook
                 </a>
             </div>
 

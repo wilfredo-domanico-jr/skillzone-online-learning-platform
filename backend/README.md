@@ -56,7 +56,7 @@ Test environment config lives inline in `phpunit.xml` (sqlite `:memory:`, array 
 
 ## Architecture notes
 
-- **Auth:** Laravel Sanctum's SPA cookie flow (not bearer tokens) — the SPA calls `GET /sanctum/csrf-cookie` before any state-changing request. Google/GitHub OAuth via Socialite, with the redirect/callback routes kept in `routes/web.php` since they need real browser navigation.
+- **Auth:** Laravel Sanctum's SPA cookie flow (not bearer tokens) — the SPA calls `GET /sanctum/csrf-cookie` before any state-changing request. Google/Facebook OAuth via Socialite, with the redirect/callback routes kept in `routes/web.php` since they need real browser navigation.
 - **Roles:** `spatie/laravel-permission` — `student` / `instructor` / `admin`, seeded via `database/seeders/RoleSeeder.php`.
 - **Commerce:** cart → Stripe Checkout Session → webhook (`POST /webhooks/stripe`) is the source of truth for granting access, not the success-URL redirect. Stripe is wrapped behind `App\Contracts\PaymentGateway` so checkout/webhook logic is unit-testable without real Stripe credentials (tests use `Tests\Fakes\FakePaymentGateway`).
 - **Instructor payouts:** a simple internal ledger (`php artisan payouts:generate`), not Stripe Connect — no real money movement to instructors yet.

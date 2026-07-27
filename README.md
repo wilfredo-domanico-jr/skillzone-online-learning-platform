@@ -43,7 +43,7 @@ By default the backend uses a MySQL database (`DB_CONNECTION`, `DB_DATABASE`, et
 
 ## What's built
 
-- **Auth** — email/password + Google/GitHub OAuth (Sanctum SPA cookie flow), role-based access (student / instructor / admin)
+- **Auth** — email/password + Google/Facebook OAuth (Sanctum SPA cookie flow), role-based access (student / instructor / admin)
 - **Catalog & curriculum** — categories, courses, sections, video/article/quiz/resource lessons, instructor authoring, admin moderation queue
 - **Enrollment & the course player** — free-course enrollment, per-lesson progress, video resume position
 - **Commerce** — cart, coupons, Stripe Checkout, webhook-driven order/enrollment granting
