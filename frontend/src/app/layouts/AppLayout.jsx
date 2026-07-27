@@ -40,10 +40,10 @@ export default function AppLayout() {
                     <div className="flex min-w-0 items-center gap-5">
                         <Link to="/courses" className="flex shrink-0 items-center gap-2">
                             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-500 font-display text-sm font-bold text-ink-950">
-                                O
+                                S
                             </span>
                             <span className="hidden font-display text-lg font-semibold text-white sm:inline">
-                                Learnify
+                                SkillZone
                             </span>
                         </Link>
                         <div className="flex items-center gap-1 overflow-x-auto">

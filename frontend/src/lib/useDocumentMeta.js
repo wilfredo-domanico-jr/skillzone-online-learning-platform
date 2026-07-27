@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const DEFAULT_TITLE = 'Online Learning Platform';
+const DEFAULT_TITLE = 'SkillZone';
 const DEFAULT_DESCRIPTION = 'Learn new skills from expert instructors — browse courses, enroll, and start learning today.';
 
 /**

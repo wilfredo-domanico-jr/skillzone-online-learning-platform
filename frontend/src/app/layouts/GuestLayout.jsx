@@ -9,9 +9,9 @@ export default function GuestLayout() {
 
                 <Link to="/courses" className="relative z-10 flex items-center gap-2">
                     <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 font-display text-sm font-bold text-ink-950">
-                        O
+                        S
                     </span>
-                    <span className="font-display text-lg font-semibold text-white">Learnify</span>
+                    <span className="font-display text-lg font-semibold text-white">SkillZone</span>
                 </Link>
 
                 <div className="relative z-10 max-w-md">
@@ -25,13 +25,13 @@ export default function GuestLayout() {
                     </p>
                 </div>
 
-                <p className="relative z-10 text-xs text-white/30">© {new Date().getFullYear()} Learnify</p>
+                <p className="relative z-10 text-xs text-white/30">© {new Date().getFullYear()} SkillZone</p>
             </div>
 
             <div className="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2">
                 <div className="w-full max-w-sm">
                     <h1 className="mb-8 text-center font-display text-2xl font-semibold text-white lg:hidden">
-                        Learnify
+                        SkillZone
                     </h1>
                     <div className="card p-8">
                         <Outlet />

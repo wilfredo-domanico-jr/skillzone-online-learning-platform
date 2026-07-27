@@ -37,7 +37,7 @@ export default function CourseListPage() {
             <div className="relative overflow-hidden rounded-3xl bg-ink-950 px-8 py-12 md:px-12">
                 <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl" />
                 <div className="relative max-w-xl">
-                    <p className="eyebrow">Learnify catalog</p>
+                    <p className="eyebrow">SkillZone catalog</p>
                     <h1 className="mt-3 font-display text-3xl leading-tight font-semibold text-white md:text-4xl">
                         Discover the skills of the future
                     </h1>

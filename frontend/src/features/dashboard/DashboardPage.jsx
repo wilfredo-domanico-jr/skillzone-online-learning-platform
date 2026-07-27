@@ -5,7 +5,7 @@ const LINKS = [
     { to: '/my-learning', title: 'My Learning', desc: 'Resume your enrolled courses and track progress.' },
     { to: '/courses', title: 'Browse Courses', desc: 'Explore the full catalog across every category.' },
     { to: '/orders', title: 'Orders', desc: 'Review your purchase history and receipts.' },
-    { to: '/instructor/apply', title: 'Become an Instructor', desc: 'Apply to start teaching on Learnify.' },
+    { to: '/instructor/apply', title: 'Become an Instructor', desc: 'Apply to start teaching on SkillZone.' },
 ];
 
 export default function DashboardPage() {

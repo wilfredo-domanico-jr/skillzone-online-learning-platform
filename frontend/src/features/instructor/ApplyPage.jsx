@@ -71,7 +71,7 @@ export default function ApplyPage() {
             <div className="relative overflow-hidden rounded-3xl bg-ink-950 px-8 py-10 md:px-12">
                 <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl" />
                 <div className="relative">
-                    <p className="eyebrow">Teach on Learnify</p>
+                    <p className="eyebrow">Teach on SkillZone</p>
                     <h1 className="mt-3 font-display text-2xl font-semibold text-white">
                         Apply to become an instructor
                     </h1>
