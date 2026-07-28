@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Contracts\PaymentGateway;
@@ -43,7 +45,9 @@ class StripeWebhookController extends Controller
      */
     private function grantAccessForCompletedSession(array $session): void
     {
-        $order = Order::where('stripe_checkout_session_id', $session['id'])->first();
+        $order = Order::with('items.course.instructor')
+            ->where('stripe_checkout_session_id', $session['id'])
+            ->first();
 
         if (! $order || $order->status === OrderStatus::Paid) {
             return;
@@ -72,7 +76,8 @@ class StripeWebhookController extends Controller
             }
 
             $courseIds = $order->items->pluck('course_id');
-            Cart::where('user_id', $order->user_id)->first()?->items()->whereIn('course_id', $courseIds)->delete();
+            $cart = Cart::where('user_id', $order->user_id)->first();
+            $cart?->items()->whereIn('course_id', $courseIds)->delete();
         });
     }
 }

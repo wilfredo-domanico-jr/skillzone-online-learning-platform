@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\CourseStatus;
 use App\Enums\EnrollmentSource;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EnrollmentResource;
@@ -37,13 +38,13 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request, string $slug): JsonResponse
     {
-        $course = Course::where('slug', $slug)->where('status', CourseStatus::Published)->first();
+        $course = Course::published()->where('slug', $slug)->first();
 
         if (! $course) {
             throw new NotFoundHttpException();
         }
 
-        $existing = $request->user()->enrollments()->where('course_id', $course->id)->first();
+        $existing = $request->user()->enrollmentFor($course);
 
         if ($existing) {
             return (new EnrollmentResource($existing->load('course.category', 'course.instructor')))->response();

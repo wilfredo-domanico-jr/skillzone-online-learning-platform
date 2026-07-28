@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use App\Enums\PayoutStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,6 +30,7 @@ class InstructorPayout extends Model
             'gross_amount' => 'decimal:2',
             'platform_fee_amount' => 'decimal:2',
             'net_amount' => 'decimal:2',
+            'status' => PayoutStatus::class,
             'paid_at' => 'datetime',
         ];
     }

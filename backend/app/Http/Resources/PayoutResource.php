@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class PayoutResource extends JsonResource
             'gross_amount' => (float) $this->gross_amount,
             'platform_fee_amount' => (float) $this->platform_fee_amount,
             'net_amount' => (float) $this->net_amount,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'paid_at' => $this->paid_at,
             'notes' => $this->notes,
             'instructor' => $this->whenLoaded('instructor', fn () => [

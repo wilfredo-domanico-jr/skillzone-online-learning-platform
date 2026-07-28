@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\PayoutStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PayoutResource;
 use App\Models\InstructorPayout;
@@ -25,11 +28,11 @@ class PayoutController extends Controller
 
     public function markPaid(InstructorPayout $payout): JsonResponse
     {
-        if ($payout->status === 'paid') {
+        if ($payout->status === PayoutStatus::Paid) {
             throw ValidationException::withMessages(['status' => 'This payout has already been marked paid.']);
         }
 
-        $payout->update(['status' => 'paid', 'paid_at' => now()]);
+        $payout->update(['status' => PayoutStatus::Paid, 'paid_at' => now()]);
         $payout->instructor->notify(new PayoutPaid($payout));
 
         return (new PayoutResource($payout->load('instructor')))->response();

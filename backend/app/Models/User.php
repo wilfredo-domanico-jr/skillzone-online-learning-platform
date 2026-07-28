@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -71,6 +73,16 @@ class User extends Authenticatable
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function isEnrolledIn(Course $course): bool
+    {
+        return $this->enrollments()->where('course_id', $course->id)->exists();
+    }
+
+    public function enrollmentFor(Course $course): ?Enrollment
+    {
+        return $this->enrollments()->where('course_id', $course->id)->first();
     }
 
     public function cart(): HasOne

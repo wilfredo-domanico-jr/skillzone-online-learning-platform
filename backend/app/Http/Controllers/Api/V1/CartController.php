@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\CourseStatus;
@@ -36,7 +38,7 @@ class CartController extends Controller
             ]);
         }
 
-        if ($request->user()->enrollments()->where('course_id', $course->id)->exists()) {
+        if ($request->user()->isEnrolledIn($course)) {
             throw ValidationException::withMessages(['course_id' => 'You are already enrolled in this course.']);
         }
 

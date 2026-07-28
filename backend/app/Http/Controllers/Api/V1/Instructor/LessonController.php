@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Instructor;
 
+use App\Http\Controllers\Concerns\ReordersModels;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
@@ -13,6 +16,8 @@ use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
+    use ReordersModels;
+
     public function store(StoreLessonRequest $request, CourseSection $section): JsonResponse
     {
         $this->authorize('update', $section->course);
@@ -59,13 +64,7 @@ class LessonController extends Controller
             'lesson_ids.*' => ['integer', 'exists:lessons,id'],
         ])['lesson_ids'];
 
-        $lessons = $section->lessons()->whereIn('id', $ids)->pluck('id');
-
-        foreach ($ids as $position => $id) {
-            if ($lessons->contains($id)) {
-                Lesson::whereKey($id)->update(['position' => $position]);
-            }
-        }
+        $this->reorderPositions($section->lessons(), $ids);
 
         return LessonResource::collection($section->lessons()->get())->response();
     }

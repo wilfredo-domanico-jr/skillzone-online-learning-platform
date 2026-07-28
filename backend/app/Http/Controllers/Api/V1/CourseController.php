@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\CourseStatus;
@@ -19,7 +21,7 @@ class CourseController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $courses = Course::query()
+        $query = Course::query()
             ->published()
             ->with(['instructor', 'category'])
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -31,17 +33,16 @@ class CourseController extends Controller
             })
             ->when($request->filled('level'), fn ($query) => $query->where('level', $request->string('level')))
             ->when($request->query('price') === 'free', fn ($query) => $query->where('price', 0))
-            ->when($request->query('price') === 'paid', fn ($query) => $query->where('price', '>', 0))
-            ->when(
-                $request->query('sort') === 'price_asc',
-                fn ($query) => $query->orderBy('price'),
-                fn ($query) => match ($request->query('sort')) {
-                    'price_desc' => $query->orderByDesc('price'),
-                    'rating' => $query->orderByDesc('average_rating')->orderByDesc('reviews_count'),
-                    default => $query->latest('published_at'),
-                }
-            )
-            ->paginate($request->integer('per_page', 12));
+            ->when($request->query('price') === 'paid', fn ($query) => $query->where('price', '>', 0));
+
+        match ($request->query('sort')) {
+            'price_asc' => $query->orderBy('price'),
+            'price_desc' => $query->orderByDesc('price'),
+            'rating' => $query->orderByDesc('average_rating')->orderByDesc('reviews_count'),
+            default => $query->latest('published_at'),
+        };
+
+        $courses = $query->paginate($request->integer('per_page', 12));
 
         return CourseResource::collection($courses)->response();
     }
@@ -68,11 +69,9 @@ class CourseController extends Controller
         $course = $this->findVisibleBySlug($request, $slug);
 
         $user = $request->user();
-        $enrollment = $user ? $course->enrollments()->where('user_id', $user->id)->first() : null;
+        $enrollment = $user?->enrollmentFor($course);
 
-        $canViewLockedContent = $user?->id === $course->instructor_id
-            || $user?->hasRole('admin')
-            || $enrollment !== null;
+        $canViewLockedContent = $user?->can('view', $course) || $enrollment !== null;
         $request->attributes->set('can_view_locked_lesson_content', $canViewLockedContent);
 
         if ($enrollment) {
@@ -105,7 +104,7 @@ class CourseController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $isOwnerOrAdmin = $request->user()?->id === $course->instructor_id || $request->user()?->hasRole('admin');
+        $isOwnerOrAdmin = $request->user()?->can('view', $course) ?? false;
 
         if ($course->status !== CourseStatus::Published && ! $isOwnerOrAdmin) {
             throw new NotFoundHttpException();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -22,7 +24,7 @@ class LearningController extends Controller
 
         return response()->json([
             'lesson_id' => $lesson->id,
-            'completed_at' => $enrollment->lessonProgress()->where('lesson_id', $lesson->id)->value('completed_at'),
+            'completed_at' => $enrollment->lessonProgress->first()?->completed_at,
             'enrollment' => [
                 'progress_percent' => $enrollment->progress_percent,
                 'completed_at' => $enrollment->completed_at,
@@ -65,14 +67,14 @@ class LearningController extends Controller
 
         $enrollment->recalculateProgress();
 
-        return $enrollment->fresh();
+        return $enrollment->fresh(['lessonProgress' => fn ($query) => $query->where('lesson_id', $lesson->id)]);
     }
 
     private function enrollmentFor(Lesson $lesson, User $user): Enrollment
     {
         $course = $lesson->section->course;
 
-        $enrollment = $course->enrollments()->where('user_id', $user->id)->first();
+        $enrollment = $user->enrollmentFor($course);
 
         if (! $enrollment) {
             throw ValidationException::withMessages([

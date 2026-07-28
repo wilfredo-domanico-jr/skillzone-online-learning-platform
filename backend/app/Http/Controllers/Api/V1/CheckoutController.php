@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Contracts\PaymentGateway;
@@ -41,7 +43,7 @@ class CheckoutController extends Controller
                 throw ValidationException::withMessages(['cart' => "\"{$item->course->title}\" is no longer available."]);
             }
 
-            if ($request->user()->enrollments()->where('course_id', $item->course->id)->exists()) {
+            if ($request->user()->isEnrolledIn($item->course)) {
                 throw ValidationException::withMessages(['cart' => "You're already enrolled in \"{$item->course->title}\"."]);
             }
         }

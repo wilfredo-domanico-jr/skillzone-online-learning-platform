@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
+use App\Enums\OrderStatus;
+use App\Enums\PayoutStatus;
 use App\Models\InstructorPayout;
 use App\Models\OrderItem;
 use Illuminate\Console\Command;
@@ -34,7 +38,7 @@ class GeneratePayouts extends Command
 
         $totals = OrderItem::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.status', 'paid')
+            ->where('orders.status', OrderStatus::Paid->value)
             ->whereBetween('orders.paid_at', [$start, $end])
             ->selectRaw('order_items.instructor_id, SUM(order_items.price_at_purchase) as gross')
             ->groupBy('order_items.instructor_id')
@@ -69,7 +73,7 @@ class GeneratePayouts extends Command
                 'gross_amount' => $gross,
                 'platform_fee_amount' => $fee,
                 'net_amount' => $net,
-                'status' => 'pending',
+                'status' => PayoutStatus::Pending,
             ]);
 
             $this->info("Payout generated for instructor #{$row->instructor_id}: net \${$net}");

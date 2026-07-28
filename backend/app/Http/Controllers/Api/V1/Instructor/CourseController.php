@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Instructor;
 
 use App\Enums\CourseLevel;
@@ -35,12 +37,15 @@ class CourseController extends Controller
         // Explicit defaults rather than relying on the DB column default: an
         // enum-cast attribute left unset after create() reads as null in the
         // in-memory model (Eloquent doesn't refetch DB-applied defaults).
-        $course = $request->user()->courses()->create([
+        // `status` isn't fillable (system-managed), so it's forced onto the
+        // unsaved model before the single save() call.
+        $course = $request->user()->courses()->make([
             'level' => CourseLevel::AllLevels,
             'language' => 'en',
             ...$request->validated(),
-            'status' => CourseStatus::Draft,
         ]);
+        $course->forceFill(['status' => CourseStatus::Draft]);
+        $course->save();
 
         return (new CourseResource($course))->response()->setStatusCode(201);
     }
@@ -82,7 +87,7 @@ class CourseController extends Controller
             ]);
         }
 
-        $course->update(['status' => CourseStatus::PendingReview, 'rejection_reason' => null]);
+        $course->forceFill(['status' => CourseStatus::PendingReview, 'rejection_reason' => null])->save();
 
         return (new CourseResource($course))->response();
     }

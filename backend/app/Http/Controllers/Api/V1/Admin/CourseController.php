@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\CourseStatus;
@@ -33,11 +35,11 @@ class CourseController extends Controller
     {
         $this->ensurePendingReview($course);
 
-        $course->update([
+        $course->forceFill([
             'status' => CourseStatus::Published,
             'published_at' => now(),
             'rejection_reason' => null,
-        ]);
+        ])->save();
 
         $course->instructor->notify(new CourseDecided($course));
 
@@ -52,10 +54,10 @@ class CourseController extends Controller
             'rejection_reason' => ['required', 'string', 'max:500'],
         ]);
 
-        $course->update([
+        $course->forceFill([
             'status' => CourseStatus::Rejected,
             'rejection_reason' => $request->input('rejection_reason'),
-        ]);
+        ])->save();
 
         $course->instructor->notify(new CourseDecided($course));
 

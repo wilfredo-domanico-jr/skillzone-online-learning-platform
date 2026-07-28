@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\LessonType;
@@ -86,7 +88,7 @@ class QuizAttemptController extends Controller
             $submitted = collect($data['answers'])->keyBy('question_id');
 
             foreach ($quiz->questions as $question) {
-                $selected = collect($submitted->get($question->id)['answer_ids'] ?? [])->sort()->values()->all();
+                $selected = collect(data_get($submitted->get($question->id), 'answer_ids', []))->sort()->values()->all();
                 $correct = $question->correctAnswerIds();
                 $isCorrect = $selected === $correct;
 
@@ -126,9 +128,7 @@ class QuizAttemptController extends Controller
 
     private function quizFor(Lesson $lesson): \App\Models\Quiz
     {
-        if ($lesson->type !== LessonType::Quiz) {
-            abort(404);
-        }
+        abort_if($lesson->type !== LessonType::Quiz, 404);
 
         $quiz = $lesson->quiz;
         abort_if(! $quiz, 404);
@@ -139,8 +139,9 @@ class QuizAttemptController extends Controller
     private function ensureEnrolled(Request $request, Lesson $lesson): void
     {
         $course = $lesson->section->course;
-        $isOwnerOrAdmin = $request->user()->id === $course->instructor_id || $request->user()->hasRole('admin');
-        $isEnrolled = $course->enrollments()->where('user_id', $request->user()->id)->exists();
+        $user = $request->user();
+        $isOwnerOrAdmin = $user->can('view', $course);
+        $isEnrolled = $user->isEnrolledIn($course);
 
         if (! $isOwnerOrAdmin && ! $isEnrolled) {
             throw ValidationException::withMessages(['enrollment' => 'You must be enrolled in this course to take this quiz.']);

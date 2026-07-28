@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Console;
 
+use App\Enums\PayoutStatus;
 use App\Models\Course;
 use App\Models\InstructorPayout;
 use App\Models\Order;
@@ -36,7 +37,7 @@ class GeneratePayoutsTest extends TestCase
         $this->assertSame('100.00', $payout->gross_amount);
         $this->assertSame('30.00', $payout->platform_fee_amount);
         $this->assertSame('70.00', $payout->net_amount);
-        $this->assertSame('pending', $payout->status);
+        $this->assertSame(PayoutStatus::Pending, $payout->status);
     }
 
     public function test_it_skips_a_period_that_already_has_a_payout(): void

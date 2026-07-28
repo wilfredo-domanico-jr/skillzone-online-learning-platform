@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -35,7 +37,7 @@ class ReviewController extends Controller
      */
     public function store(Request $request, Course $course): JsonResponse
     {
-        if (! $course->enrollments()->where('user_id', $request->user()->id)->exists()) {
+        if (! $request->user()->isEnrolledIn($course)) {
             throw ValidationException::withMessages([
                 'course' => 'You must be enrolled in this course to review it.',
             ]);

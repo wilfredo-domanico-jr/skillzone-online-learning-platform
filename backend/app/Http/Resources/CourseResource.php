@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class CourseResource extends JsonResource
             'what_you_will_learn' => $this->what_you_will_learn,
             'published_at' => $this->published_at,
             'rejection_reason' => $this->when(
-                $request->user()?->id === $this->instructor_id || $request->user()?->hasRole('admin'),
+                $request->user()?->can('view', $this->resource) ?? false,
                 $this->rejection_reason
             ),
             'instructor' => $this->whenLoaded('instructor', fn () => [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\CourseLevel;
@@ -16,6 +18,13 @@ class Course extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Deliberately excludes status/published_at/rejection_reason/
+     * average_rating/reviews_count — those are system-managed (moderation
+     * decisions, cached rating stats), never user input. They're written via
+     * forceFill() at the specific call sites that own that decision, not
+     * through mass assignment.
+     */
     protected $fillable = [
         'instructor_id',
         'category_id',
@@ -26,15 +35,10 @@ class Course extends Model
         'thumbnail_path',
         'promo_video_path',
         'price',
-        'status',
         'level',
         'language',
         'requirements',
         'what_you_will_learn',
-        'published_at',
-        'rejection_reason',
-        'average_rating',
-        'reviews_count',
     ];
 
     protected function casts(): array
@@ -111,9 +115,9 @@ class Course extends Model
      */
     public function recalculateRating(): void
     {
-        $this->update([
+        $this->forceFill([
             'reviews_count' => $this->reviews()->count(),
             'average_rating' => $this->reviews()->avg('rating'),
-        ]);
+        ])->save();
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Instructor;
 
 use App\Enums\LessonType;
+use App\Http\Controllers\Concerns\ReordersModels;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreQuizQuestionRequest;
 use App\Http\Resources\QuizResource;
@@ -15,6 +18,8 @@ use Illuminate\Validation\ValidationException;
 
 class QuizController extends Controller
 {
+    use ReordersModels;
+
     /**
      * The quiz for editing (full detail, correct answers included), or an
      * empty shell if the instructor hasn't configured it yet.
@@ -110,13 +115,7 @@ class QuizController extends Controller
             'question_ids.*' => ['integer', 'exists:quiz_questions,id'],
         ])['question_ids'];
 
-        $questionIds = $quiz->questions()->whereIn('id', $ids)->pluck('id');
-
-        foreach ($ids as $position => $id) {
-            if ($questionIds->contains($id)) {
-                QuizQuestion::whereKey($id)->update(['position' => $position]);
-            }
-        }
+        $this->reorderPositions($quiz->questions(), $ids);
 
         return $this->respond($quiz->fresh());
     }
