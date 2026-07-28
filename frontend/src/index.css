@@ -27,6 +27,14 @@ body {
     background-color: var(--color-ink-950);
 }
 
+@layer base {
+    /* Tailwind's preflight resets <button> to cursor: default — restore the
+       pointer cursor on hover for every enabled button in the app. */
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+}
+
 @layer components {
     .btn {
         @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold
