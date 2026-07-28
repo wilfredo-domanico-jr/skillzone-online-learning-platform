@@ -94,6 +94,7 @@ Route::prefix('v1')->group(function () {
             Route::put('/courses/{course}', [InstructorCourseController::class, 'update']);
             Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroy']);
             Route::post('/courses/{course}/submit-for-review', [InstructorCourseController::class, 'submitForReview']);
+            Route::post('/courses/{course}/thumbnail', [InstructorCourseController::class, 'uploadThumbnail']);
 
             Route::post('/courses/{course}/sections', [CourseSectionController::class, 'store']);
             Route::put('/sections/{section}', [CourseSectionController::class, 'update']);

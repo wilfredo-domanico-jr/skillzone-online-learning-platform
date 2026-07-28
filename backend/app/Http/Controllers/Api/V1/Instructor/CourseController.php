@@ -13,6 +13,7 @@ use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
@@ -66,6 +67,30 @@ class CourseController extends Controller
         $course->delete();
 
         return response()->json(['message' => 'Course deleted.']);
+    }
+
+    /**
+     * Upload/replace the course's cover thumbnail. Public disk, since
+     * catalog/course-detail cards need to display it to anyone — unlike
+     * lesson video/attachments, there's nothing to gate access behind here.
+     */
+    public function uploadThumbnail(Request $request, Course $course): JsonResponse
+    {
+        $this->authorize('update', $course);
+
+        $request->validate([
+            'thumbnail' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
+
+        if ($course->thumbnail_path) {
+            Storage::disk('public')->delete($course->thumbnail_path);
+        }
+
+        $path = $request->file('thumbnail')->store('course-thumbnails', 'public');
+
+        $course->update(['thumbnail_path' => $path]);
+
+        return (new CourseResource($course->fresh('category')))->response();
     }
 
     /**

@@ -6,6 +6,8 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CourseAuthoringTest extends TestCase
@@ -91,6 +93,67 @@ class CourseAuthoringTest extends TestCase
 
         $this->assertSame(0, \App\Models\Lesson::find($lessonTwo['id'])->position);
         $this->assertSame(1, \App\Models\Lesson::find($lessonOne['id'])->position);
+    }
+
+    public function test_an_instructor_can_upload_a_course_thumbnail(): void
+    {
+        Storage::fake('public');
+        $instructor = $this->instructor();
+        $course = Course::factory()->for($instructor, 'instructor')->create();
+
+        $response = $this->actingAs($instructor)
+            ->postJson("/api/v1/instructor/courses/{$course->id}/thumbnail", [
+                'thumbnail' => UploadedFile::fake()->image('cover.jpg'),
+            ])
+            ->assertOk();
+
+        $path = $response->json('data.thumbnail_url');
+        $this->assertNotNull($path);
+        Storage::disk('public')->assertExists($course->fresh()->thumbnail_path);
+    }
+
+    public function test_uploading_a_thumbnail_replaces_the_previous_file(): void
+    {
+        Storage::fake('public');
+        $instructor = $this->instructor();
+        $course = Course::factory()->for($instructor, 'instructor')->create();
+
+        $this->actingAs($instructor)->postJson("/api/v1/instructor/courses/{$course->id}/thumbnail", [
+            'thumbnail' => UploadedFile::fake()->image('first.jpg'),
+        ])->assertOk();
+        $firstPath = $course->fresh()->thumbnail_path;
+
+        $this->actingAs($instructor)->postJson("/api/v1/instructor/courses/{$course->id}/thumbnail", [
+            'thumbnail' => UploadedFile::fake()->image('second.jpg'),
+        ])->assertOk();
+
+        Storage::disk('public')->assertMissing($firstPath);
+        Storage::disk('public')->assertExists($course->fresh()->thumbnail_path);
+    }
+
+    public function test_an_instructor_cannot_upload_a_thumbnail_for_another_instructors_course(): void
+    {
+        $owner = $this->instructor();
+        $intruder = $this->instructor();
+        $course = Course::factory()->for($owner, 'instructor')->create();
+
+        $this->actingAs($intruder)
+            ->postJson("/api/v1/instructor/courses/{$course->id}/thumbnail", [
+                'thumbnail' => UploadedFile::fake()->image('cover.jpg'),
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_thumbnail_upload_rejects_non_image_files(): void
+    {
+        $instructor = $this->instructor();
+        $course = Course::factory()->for($instructor, 'instructor')->create();
+
+        $this->actingAs($instructor)
+            ->postJson("/api/v1/instructor/courses/{$course->id}/thumbnail", [
+                'thumbnail' => UploadedFile::fake()->create('malware.exe', 10),
+            ])
+            ->assertUnprocessable();
     }
 
     public function test_submitting_for_review_requires_at_least_one_lesson(): void

@@ -78,6 +78,14 @@ export async function submitCourseForReview(courseId: number): Promise<Course> {
     return data.data;
 }
 
+export async function uploadCourseThumbnail(courseId: number, file: File): Promise<Course> {
+    await ensureCsrfCookie();
+    const form = new FormData();
+    form.append('thumbnail', file);
+    const { data } = await client.post(`/api/v1/instructor/courses/${courseId}/thumbnail`, form);
+    return data.data;
+}
+
 // Sections
 export async function createSection(courseId: number, title: string): Promise<CourseSection> {
     await ensureCsrfCookie();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { fetchCourseCurriculum } from '../../api/catalog';
 import {
     createLesson,
@@ -14,6 +14,7 @@ import {
     updateCourse,
     updateLesson,
     updateLessonArticle,
+    uploadCourseThumbnail,
     uploadLessonVideo,
 } from '../../api/instructor';
 import type { CreateLessonPayload } from '../../api/instructor';
@@ -78,6 +79,11 @@ export default function CourseEditorPage() {
         onSuccess: invalidate,
     });
 
+    const uploadThumbnail = useMutation({
+        mutationFn: (file: File) => uploadCourseThumbnail(numericCourseId, file),
+        onSuccess: invalidate,
+    });
+
     const submitForReview = useMutation({
         mutationFn: () => submitCourseForReview(numericCourseId),
         onSuccess: invalidate,
@@ -88,7 +94,37 @@ export default function CourseEditorPage() {
         onSuccess: invalidate,
     });
 
-    if (!course || !details) return <Loading />;
+    if (!course || !details) {
+        return (
+            <div className="max-w-3xl">
+                <div className="mb-6 flex items-center justify-between">
+                    <Skeleton className="h-7 w-64" />
+                    <Skeleton className="h-6 w-20" />
+                </div>
+                <div className="card mb-8 space-y-3 p-5">
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-20 w-full" />
+                </div>
+                <div className="space-y-4">
+                    {Array.from({ length: 2 }, (_, i) => (
+                        <div key={i} className="card overflow-hidden">
+                            <div className="border-b border-slate-100 bg-slate-50 px-4 py-2.5">
+                                <Skeleton className="h-4 w-32" />
+                            </div>
+                            <div className="space-y-3 p-3">
+                                <Skeleton className="h-8 w-full" />
+                                <Skeleton className="h-8 w-full" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-3xl">
@@ -122,6 +158,40 @@ export default function CourseEditorPage() {
             <section className="card mb-8 p-5">
                 <h2 className="mb-3 font-display font-semibold text-ink-900">Details</h2>
                 <div className="space-y-3">
+                    <div>
+                        <label className="label">Thumbnail</label>
+                        <div className="flex items-center gap-4">
+                            {course.thumbnail_url ? (
+                                <img
+                                    src={course.thumbnail_url}
+                                    alt=""
+                                    className="aspect-video w-40 shrink-0 rounded-lg object-cover"
+                                />
+                            ) : (
+                                <div className="flex aspect-video w-40 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-400">
+                                    No image
+                                </div>
+                            )}
+                            <div>
+                                <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) uploadThumbnail.mutate(file);
+                                    }}
+                                    className="block text-sm text-slate-600"
+                                />
+                                <p className="mt-1 text-xs text-slate-400">JPG, PNG, or WEBP. Up to 5MB.</p>
+                                {uploadThumbnail.isPending && (
+                                    <p className="mt-1 text-xs text-slate-500">Uploading…</p>
+                                )}
+                                {uploadThumbnail.isError && (
+                                    <p className="mt-1 text-xs text-red-600">{generalError(uploadThumbnail.error)}</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label className="label">Title</label>
                         <input
