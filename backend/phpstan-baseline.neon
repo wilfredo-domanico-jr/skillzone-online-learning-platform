@@ -1,0 +1,1495 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property App\\Models\\OrderItem\:\:\$gross\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/GeneratePayouts.php
+
+		-
+			message: '#^Method App\\Contracts\\PaymentGateway\:\:constructWebhookEvent\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Contracts/PaymentGateway.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Admin/CourseController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''draft''\|''pending_review''\|''published''\|''rejected'' and App\\Enums\\CourseStatus\:\:PendingReview will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Admin/CourseController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:assignRole\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Admin/InstructorApplicationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Admin/InstructorApplicationController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''approved''\|''pending''\|''rejected'' and App\\Enums\\InstructorApplicationStatus\:\:Pending will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Admin/InstructorApplicationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Admin/PayoutController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''paid''\|''pending''\|''processing'' and App\\Enums\\PayoutStatus\:\:Paid will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/Api/V1/Admin/PayoutController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AuthController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\CartController\:\:cartFor\(\) should return App\\Models\\Cart but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CartController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''draft''\|''pending_review''\|''published''\|''rejected'' and App\\Enums\\CourseStatus\:\:Published will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/CartController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Controllers/Api/V1/CartController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CheckoutController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$items\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/CheckoutController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:items\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CheckoutController.php
+
+		-
+			message: '#^Parameter \#1 \$order of method App\\Contracts\\PaymentGateway\:\:createCheckoutSession\(\) expects App\\Models\\Order, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CheckoutController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$items\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/CouponController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\CourseController\:\:findVisibleBySlug\(\) has parameter \$with with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/V1/CourseController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''draft''\|''pending_review''\|''published''\|''rejected'' and App\\Enums\\CourseStatus\:\:Published will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/CourseController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/EnrollmentController.php
+
+		-
+			message: '#^Parameter \#1 \$enrollment of class App\\Notifications\\NewEnrollment constructor expects App\\Models\\Enrollment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/EnrollmentController.php
+
+		-
+			message: '#^Call to function in_array\(\) with arguments ''draft''\|''pending_review''\|''published''\|''rejected'', array\{App\\Enums\\CourseStatus\:\:Draft, App\\Enums\\CourseStatus\:\:Rejected\} and true will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/CourseController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/CourseController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\CourseSectionController\:\:reorderPositions\(\) has parameter \$ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/CourseSectionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\CourseSectionController\:\:reorderPositions\(\) has parameter \$relation with generic class Illuminate\\Database\\Eloquent\\Relations\\Relation but does not specify its types\: TRelatedModel, TDeclaringModel, TResult$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/CourseSectionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/Instructor/LessonContentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$section\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonContentController.php
+
+		-
+			message: '#^Parameter \#2 \$lesson of method App\\Http\\Controllers\\Api\\V1\\Instructor\\LessonContentController\:\:respond\(\) expects App\\Models\\Lesson, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonContentController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''article''\|''quiz''\|''resource''\|''video'' and App\\Enums\\LessonType will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonContentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Instructor/LessonController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\LessonController\:\:reorderPositions\(\) has parameter \$ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\LessonController\:\:reorderPositions\(\) has parameter \$relation with generic class Illuminate\\Database\\Eloquent\\Relations\\Relation but does not specify its types\: TRelatedModel, TDeclaringModel, TResult$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonController.php
+
+		-
+			message: '#^Parameter \#2 \$lesson of method App\\Http\\Controllers\\Api\\V1\\Instructor\\LessonController\:\:respond\(\) expects App\\Models\\Lesson, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/LessonController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lesson\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$section\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:reorderPositions\(\) has parameter \$ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:reorderPositions\(\) has parameter \$relation with generic class Illuminate\\Database\\Eloquent\\Relations\\Relation but does not specify its types\: TRelatedModel, TDeclaringModel, TResult$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:syncAnswers\(\) has parameter \$answers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Parameter \#1 \$question of method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:syncAnswers\(\) expects App\\Models\\QuizQuestion, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Parameter \#1 \$quiz of method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:respond\(\) expects App\\Models\\Quiz, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Parameter \#1 \$quiz of method App\\Http\\Controllers\\Api\\V1\\Instructor\\QuizController\:\:respond\(\) expects App\\Models\\Quiz, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''article''\|''quiz''\|''resource''\|''video'' and App\\Enums\\LessonType\:\:Quiz will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Controllers/Api/V1/Instructor/QuizController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$completed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/LearningController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/LearningController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lesson\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$passing_score_percent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$questions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Call to function abort_if\(\) with true and 404 will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\QuizAttemptController\:\:quizFor\(\) should return App\\Models\\Quiz but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Parameter \#2 \$user of method App\\Http\\Controllers\\Api\\V1\\LearningController\:\:completeLessonForQuiz\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''article''\|''quiz''\|''resource''\|''video'' and App\\Enums\\LessonType\:\:Quiz will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Http/Controllers/Api/V1/QuizAttemptController.php
+
+		-
+			message: '#^Call to an undefined method Laravel\\Socialite\\Contracts\\Provider\:\:stateless\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/SocialController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SocialController\:\:redirect\(\) should return Illuminate\\Http\\RedirectResponse but returns Symfony\\Component\\HttpFoundation\\RedirectResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/SocialController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/StripeWebhookController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/StripeWebhookController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StripeWebhookController\:\:grantAccessForCompletedSession\(\) has parameter \$session with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/StripeWebhookController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''failed''\|''paid''\|''pending''\|''refunded'' and App\\Enums\\OrderStatus\:\:Paid will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/StripeWebhookController.php
+
+		-
+			message: '#^Parameter \#1 \$value of static method Illuminate\\Support\\Str\:\:lower\(\) expects string, Illuminate\\Support\\Stringable given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Requests/Auth/LoginRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CartResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CartResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CartResource\:\:\$items\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/CartResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\CartResource\:\:relationLoaded\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/CartResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CategoryResource\:\:\$icon\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CategoryResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CategoryResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CategoryResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CategoryResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CategoryResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CategoryResource\:\:\$parent_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CategoryResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CategoryResource\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CategoryResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$average_rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$language\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$level\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$rejection_reason\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$requirements\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$reviews_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$subtitle\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$thumbnail_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseResource\:\:\$what_you_will_learn\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseSectionResource\:\:\$course_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseSectionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseSectionResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseSectionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseSectionResource\:\:\$position\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseSectionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\CourseSectionResource\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/CourseSectionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\EnrollmentResource\:\:\$completed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/EnrollmentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\EnrollmentResource\:\:\$enrolled_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/EnrollmentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\EnrollmentResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/EnrollmentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\EnrollmentResource\:\:\$progress_percent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/EnrollmentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\EnrollmentResource\:\:\$source\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/EnrollmentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$bio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$expertise\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$portfolio_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$rejection_reason\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$reviewed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$submitted_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\InstructorApplicationResource\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/InstructorApplicationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$article\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$attachments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$duration_seconds\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$is_previewable\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$position\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$section_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\LessonResource\:\:\$videoDetail\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/LessonResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$discount_total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$items\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$paid_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$subtotal\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\OrderResource\:\:\$total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/OrderResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$gross_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$instructor\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$net_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$notes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$paid_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$period_end\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$period_start\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$platform_fee_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\PayoutResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/PayoutResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$answers\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$passed\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$quiz_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$score_percent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$started_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizAttemptResource\:\:\$submitted_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/QuizAttemptResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$lesson_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$max_attempts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$passing_score_percent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$questions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\QuizResource\:\:\$time_limit_minutes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/QuizResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ReviewResource\:\:\$comment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ReviewResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ReviewResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ReviewResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ReviewResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ReviewResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ReviewResource\:\:\$rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ReviewResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ReviewResource\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/ReviewResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$roles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$suspended_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Method App\\Models\\Cart\:\:items\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cart.php
+
+		-
+			message: '#^Method App\\Models\\Cart\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cart.php
+
+		-
+			message: '#^Method App\\Models\\CartItem\:\:cart\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CartItem.php
+
+		-
+			message: '#^Method App\\Models\\CartItem\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CartItem.php
+
+		-
+			message: '#^Class App\\Models\\Category uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Method App\\Models\\Category\:\:children\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Method App\\Models\\Category\:\:courses\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Method App\\Models\\Category\:\:parent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Cannot call method isFuture\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Class App\\Models\\Coupon uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Method App\\Models\\Coupon\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Method App\\Models\\Coupon\:\:instructor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Method App\\Models\\Coupon\:\:isRedeemableFor\(\) has parameter \$courseIds with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''fixed''\|''percent'' and App\\Enums\\CouponType\:\:Percent will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Coupon.php
+
+		-
+			message: '#^Class App\\Models\\Course uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:category\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:enrollments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:instructor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:reviews\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:scopePublished\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:scopePublished\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Method App\\Models\\Course\:\:sections\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Course.php
+
+		-
+			message: '#^Class App\\Models\\CourseSection uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CourseSection.php
+
+		-
+			message: '#^Method App\\Models\\CourseSection\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CourseSection.php
+
+		-
+			message: '#^Method App\\Models\\CourseSection\:\:lessons\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CourseSection.php
+
+		-
+			message: '#^Class App\\Models\\Enrollment uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Enrollment.php
+
+		-
+			message: '#^Method App\\Models\\Enrollment\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Enrollment.php
+
+		-
+			message: '#^Method App\\Models\\Enrollment\:\:lessonProgress\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Enrollment.php
+
+		-
+			message: '#^Method App\\Models\\Enrollment\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Enrollment.php
+
+		-
+			message: '#^Class App\\Models\\InstructorApplication uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/InstructorApplication.php
+
+		-
+			message: '#^Method App\\Models\\InstructorApplication\:\:reviewer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/InstructorApplication.php
+
+		-
+			message: '#^Method App\\Models\\InstructorApplication\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/InstructorApplication.php
+
+		-
+			message: '#^Method App\\Models\\InstructorPayout\:\:instructor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/InstructorPayout.php
+
+		-
+			message: '#^Class App\\Models\\Lesson uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\Lesson\:\:article\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\Lesson\:\:attachments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\Lesson\:\:quiz\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\Lesson\:\:section\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\Lesson\:\:videoDetail\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Lesson.php
+
+		-
+			message: '#^Method App\\Models\\LessonArticle\:\:lesson\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LessonArticle.php
+
+		-
+			message: '#^Method App\\Models\\LessonAttachment\:\:lesson\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LessonAttachment.php
+
+		-
+			message: '#^Method App\\Models\\LessonProgress\:\:enrollment\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LessonProgress.php
+
+		-
+			message: '#^Method App\\Models\\LessonProgress\:\:lesson\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LessonProgress.php
+
+		-
+			message: '#^Method App\\Models\\LessonVideoDetail\:\:lesson\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LessonVideoDetail.php
+
+		-
+			message: '#^Class App\\Models\\Order uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:coupon\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:items\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\OrderItem\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Method App\\Models\\OrderItem\:\:instructor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Method App\\Models\\OrderItem\:\:order\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Method App\\Models\\Quiz\:\:attempts\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Quiz.php
+
+		-
+			message: '#^Method App\\Models\\Quiz\:\:lesson\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Quiz.php
+
+		-
+			message: '#^Method App\\Models\\Quiz\:\:questions\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Quiz.php
+
+		-
+			message: '#^Method App\\Models\\QuizAnswer\:\:question\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAnswer.php
+
+		-
+			message: '#^Method App\\Models\\QuizAttempt\:\:answers\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAttempt.php
+
+		-
+			message: '#^Method App\\Models\\QuizAttempt\:\:quiz\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAttempt.php
+
+		-
+			message: '#^Method App\\Models\\QuizAttempt\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAttempt.php
+
+		-
+			message: '#^Method App\\Models\\QuizAttemptAnswer\:\:attempt\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAttemptAnswer.php
+
+		-
+			message: '#^Method App\\Models\\QuizAttemptAnswer\:\:question\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizAttemptAnswer.php
+
+		-
+			message: '#^Method App\\Models\\QuizQuestion\:\:answers\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizQuestion.php
+
+		-
+			message: '#^Method App\\Models\\QuizQuestion\:\:correctAnswerIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/QuizQuestion.php
+
+		-
+			message: '#^Method App\\Models\\QuizQuestion\:\:quiz\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuizQuestion.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recalculateRating\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Models/Review.php
+
+		-
+			message: '#^Class App\\Models\\Review uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Review.php
+
+		-
+			message: '#^Method App\\Models\\Review\:\:course\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Review.php
+
+		-
+			message: '#^Method App\\Models\\Review\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Review.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:cart\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:courses\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:enrollmentFor\(\) should return App\\Models\\Enrollment\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:enrollments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:instructorApplications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:orders\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:payouts\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:quizAttempts\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:reviews\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/CourseDecided.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/InstructorApplicationDecided.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/NewEnrollment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/NewEnrollment.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Notifications/PayoutPaid.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$course\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StripePaymentGateway.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StripePaymentGateway.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$price_at_purchase\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StripePaymentGateway.php
+
+		-
+			message: '#^Method App\\Services\\StripePaymentGateway\:\:constructWebhookEvent\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StripePaymentGateway.php
+
+		-
+			message: '#^Parameter \#1 \$params of method Stripe\\Service\\Checkout\\SessionService\:\:create\(\) expects array\{adaptive_pricing\?\: array\{enabled\?\: bool\}, after_expiration\?\: array\{recovery\?\: array\{allow_promotion_codes\?\: bool, enabled\: bool\}\}, allow_promotion_codes\?\: bool, automatic_tax\?\: array\{enabled\: bool, liability\?\: array\{account\?\: string, type\: string\}\}, billing_address_collection\?\: string, branding_settings\?\: array\{background_color\?\: string\|null, border_style\?\: string\|null, button_color\?\: string\|null, display_name\?\: string, font_family\?\: string\|null, icon\?\: array\{file\?\: string, type\: string, url\?\: string\}, logo\?\: array\{file\?\: string, type\: string, url\?\: string\}\}, cancel_url\?\: string, client_reference_id\?\: string, \.\.\.\}\|null, array\{mode\: ''payment'', line_items\: array\<int, array\{price_data\: array\{currency\: string, product_data\: array\{name\: mixed\}, unit_amount\: int\}, quantity\: 1\}\>, success_url\: string, cancel_url\: string, customer_email\: mixed, client_reference_id\: decimal\-int\-string, metadata\: array\{order_id\: int\}, discounts\?\: array\{array\{coupon\: string\}\}\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/StripePaymentGateway.php

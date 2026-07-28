@@ -1,0 +1,34 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+
+    # Level 6 is a pragmatic starting point for a codebase that hasn't run
+    # PHPStan before — it catches real bugs (undefined methods/properties,
+    # wrong argument types, always-true/false conditions) without demanding
+    # full generic/return-type coverage everywhere on day one. Raise toward
+    # level 9 incrementally as the baseline below shrinks.
+    level: 6
+
+    # phpstan-baseline.neon (275 errors) was audited, not blindly generated:
+    # almost all are one of two false-positive classes confirmed by hand —
+    # (1) Eloquent relation methods (HasMany/BelongsTo/etc.) without
+    #     <TRelatedModel, TDeclaringModel> generics, which makes every
+    #     ->relation->property access resolve to the generic base Model and
+    #     cascade into property.notFound/method.notFound/argument.type; and
+    # (2) backed-enum casts (CourseStatus, OrderStatus, LessonType, etc.) on
+    #     columns whose migration used a native MySQL enum(...) column —
+    #     Larastan infers the raw DB literal-string union instead of the
+    #     PHP cast type, so correct `$model->status !== SomeEnum::Case`
+    #     comparisons get flagged as always-true/false/unreachable. Verified
+    #     against Course::casts(), the courses migration, and the passing
+    #     test suite. Neither class is a real bug; fixing (1) properly means
+    #     adding generics to 60+ relation methods across ~20 models, which
+    #     is why it's baselined rather than hand-fixed. New code should not
+    #     add to the baseline — regenerate only after deliberately reviewing
+    #     what changed.
+
+    tmpDir: storage/framework/phpstan
