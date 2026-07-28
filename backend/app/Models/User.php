@@ -60,6 +60,17 @@ class User extends Authenticatable
         return $this->suspended_at !== null;
     }
 
+    protected static function booted(): void
+    {
+        // reviews.user_id cascades at the DB level on user deletion, which
+        // bypasses Review's own model events — deleting through Eloquent
+        // instances here first ensures the reviewed courses' cached
+        // average_rating/reviews_count still get recalculated.
+        static::deleting(function (User $user) {
+            $user->reviews()->get()->each->delete();
+        });
+    }
+
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'instructor_id');

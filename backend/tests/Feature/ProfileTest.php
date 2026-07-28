@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -79,5 +81,28 @@ class ProfileTest extends TestCase
         $response->assertUnprocessable()->assertJsonValidationErrors('password');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_deleting_an_account_recalculates_the_reviewed_courses_rating(): void
+    {
+        // reviews.user_id cascades at the DB level on user deletion, which
+        // bypasses Review's own model events — this guards against that
+        // leaving the course's cached average_rating/reviews_count stale.
+        $user = User::factory()->create();
+        $otherStudent = User::factory()->create();
+        $course = Course::factory()->published()->create();
+        Enrollment::factory()->create(['user_id' => $user->id, 'course_id' => $course->id]);
+        Enrollment::factory()->create(['user_id' => $otherStudent->id, 'course_id' => $course->id]);
+        $course->reviews()->create(['user_id' => $user->id, 'rating' => 1]);
+        $course->reviews()->create(['user_id' => $otherStudent->id, 'rating' => 5]);
+
+        $this
+            ->actingAs($user)
+            ->deleteJson('/api/v1/profile', ['password' => 'password'])
+            ->assertOk();
+
+        $course->refresh();
+        $this->assertSame(1, $course->reviews_count);
+        $this->assertSame('5.00', $course->average_rating);
     }
 }
