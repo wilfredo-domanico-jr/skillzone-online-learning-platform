@@ -5,6 +5,7 @@ import Skeleton from '../../components/Skeleton';
 import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAnalyticsOverview, fetchMyPayouts } from '../../api/instructor';
 import { formatPrice } from '../../lib/formatPrice';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
 
 export default function InstructorDashboardPage() {
@@ -93,7 +94,7 @@ export default function InstructorDashboardPage() {
                             <p className="font-display text-sm font-semibold text-ink-900">
                                 {formatPrice(payout.net_amount)}
                             </p>
-                            <span className={PAYOUT_STATUS_STYLES[payout.status]}>{payout.status}</span>
+                            <span className={PAYOUT_STATUS_STYLES[payout.status]}>{formatSnakeCase(payout.status)}</span>
                         </div>
                     </div>
                 ))}

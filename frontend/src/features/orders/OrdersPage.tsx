@@ -5,6 +5,7 @@ import Pagination from '../../components/Pagination';
 import SkeletonRow from '../../components/SkeletonRow';
 import { fetchOrders } from '../../api/commerce';
 import { formatPrice } from '../../lib/formatPrice';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import type { OrderStatus } from '../../types/api';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
@@ -45,7 +46,7 @@ export default function OrdersPage() {
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-sm text-slate-600">{formatPrice(order.total)}</span>
-                                <span className={STATUS_STYLES[order.status]}>{order.status}</span>
+                                <span className={STATUS_STYLES[order.status]}>{formatSnakeCase(order.status)}</span>
                             </div>
                         </Link>
                     </li>

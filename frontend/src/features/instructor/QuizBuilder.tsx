@@ -8,8 +8,10 @@ import {
     updateQuestion,
 } from '../../api/quiz';
 import type { QuizQuestionPayload } from '../../api/quiz';
+import Select from '../../components/Select';
 import Skeleton from '../../components/Skeleton';
 import { DEFAULT_PASSING_SCORE_PERCENT } from '../../lib/constants';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import type { QuizQuestion, QuizQuestionType } from '../../types/api';
 
 // Local draft type for the answer-editing form only: a newly-added option
@@ -180,7 +182,7 @@ function QuestionEditor({ question, onSave, onDelete }: QuestionEditorProps) {
                     <div>
                         <p className="font-medium text-ink-900">{question.question_text}</p>
                         <p className="text-xs text-slate-500">
-                            {question.type.replace('_', ' ')} · {question.points} pt(s)
+                            {formatSnakeCase(question.type)} · {question.points} pt(s)
                         </p>
                         <ul className="mt-1 list-inside list-disc text-xs text-slate-600">
                             {question.answers.map((a, i) => (
@@ -299,19 +301,19 @@ function QuestionForm({
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
-            <select
-                className="input w-auto !text-sm"
+            <Select
+                className="w-auto !text-sm"
                 value={type}
-                onChange={(e) => {
-                    const nextType = e.target.value as QuizQuestionType;
+                onChange={(nextType) => {
                     setType(nextType);
                     setAnswers(emptyAnswers(nextType));
                 }}
-            >
-                <option value="single_choice">Single choice</option>
-                <option value="multiple_choice">Multiple choice</option>
-                <option value="true_false">True / False</option>
-            </select>
+                options={[
+                    { value: 'single_choice', label: 'Single choice' },
+                    { value: 'multiple_choice', label: 'Multiple choice' },
+                    { value: 'true_false', label: 'True / False' },
+                ]}
+            />
 
             {answers.map((answer, index) => (
                 <div key={index} className="flex items-center gap-2">

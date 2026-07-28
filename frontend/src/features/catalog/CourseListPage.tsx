@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import Pagination from '../../components/Pagination';
+import Select from '../../components/Select';
 import SkeletonCard from '../../components/SkeletonCard';
 import { fetchCategories, fetchCourses } from '../../api/catalog';
 import { formatPrice } from '../../lib/formatPrice';
@@ -82,35 +83,36 @@ export default function CourseListPage() {
             </div>
 
             <div className="card mt-6 flex flex-wrap items-center gap-3 p-4">
-                <select value={category} onChange={(e: ChangeEvent<HTMLSelectElement>) => onCategoryChange(e.target.value)} className="input w-auto">
-                    <option value="">All categories</option>
-                    {categories?.map((c) => (
-                        <option key={c.id} value={c.slug}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
-                <select
+                <Select
+                    value={category}
+                    onChange={onCategoryChange}
+                    className="w-auto"
+                    options={[
+                        { value: '', label: 'All categories' },
+                        ...(categories?.map((c) => ({ value: c.slug, label: c.name })) ?? []),
+                    ]}
+                />
+                <Select
                     value={price}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) => onPriceChange(e.target.value as '' | 'free' | 'paid')}
-                    className="input w-auto"
-                >
-                    <option value="">Any price</option>
-                    <option value="free">Free</option>
-                    <option value="paid">Paid</option>
-                </select>
-                <select
+                    onChange={onPriceChange}
+                    className="w-auto"
+                    options={[
+                        { value: '', label: 'Any price' },
+                        { value: 'free', label: 'Free' },
+                        { value: 'paid', label: 'Paid' },
+                    ]}
+                />
+                <Select
                     value={sort}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                        onSortChange(e.target.value as '' | 'price_asc' | 'price_desc' | 'rating')
-                    }
-                    className="input w-auto"
-                >
-                    <option value="">Newest</option>
-                    <option value="rating">Highest rated</option>
-                    <option value="price_asc">Price: low to high</option>
-                    <option value="price_desc">Price: high to low</option>
-                </select>
+                    onChange={onSortChange}
+                    className="w-auto"
+                    options={[
+                        { value: '', label: 'Newest' },
+                        { value: 'rating', label: 'Highest rated' },
+                        { value: 'price_asc', label: 'Price: low to high' },
+                        { value: 'price_desc', label: 'Price: high to low' },
+                    ]}
+                />
             </div>
 
             {data && data.data.length === 0 && <p className="mt-8 text-slate-500">No courses found.</p>}

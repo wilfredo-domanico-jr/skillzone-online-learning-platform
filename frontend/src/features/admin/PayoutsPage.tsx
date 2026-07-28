@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Pagination from '../../components/Pagination';
+import Select from '../../components/Select';
 import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAdminPayouts, markPayoutPaid } from '../../api/admin';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
 import type { PayoutStatus } from '../../types/api';
 
@@ -29,19 +31,22 @@ export default function PayoutsPage() {
             <h1 className="mt-1 font-display text-2xl font-semibold text-ink-900">Instructor Payouts</h1>
             <p className="mt-1 text-sm text-slate-500">Review generated payout periods and mark them as paid.</p>
 
-            <select
-                value={status}
-                onChange={(e) => {
-                    setStatus(e.target.value as PayoutStatus | '');
-                    setPage(1);
-                }}
-                className="input mt-6 mb-4 w-auto"
-            >
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="paid">Paid</option>
-                <option value="">All</option>
-            </select>
+            <div className="mt-6 mb-4">
+                <Select
+                    value={status}
+                    onChange={(value) => {
+                        setStatus(value);
+                        setPage(1);
+                    }}
+                    options={[
+                        { value: 'pending', label: 'Pending' },
+                        { value: 'processing', label: 'Processing' },
+                        { value: 'paid', label: 'Paid' },
+                        { value: '', label: 'All' },
+                    ]}
+                    className="w-auto"
+                />
+            </div>
 
             {markPaid.isError && <p className="mb-2 text-sm text-red-600">{generalError(markPaid.error)}</p>}
 
@@ -56,7 +61,7 @@ export default function PayoutsPage() {
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className={PAYOUT_STATUS_STYLES[payout.status]}>{payout.status}</span>
+                            <span className={PAYOUT_STATUS_STYLES[payout.status]}>{formatSnakeCase(payout.status)}</span>
                             {payout.status !== 'paid' && (
                                 <button
                                     type="button"

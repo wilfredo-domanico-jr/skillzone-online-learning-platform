@@ -8,9 +8,11 @@ import { addToCart, fetchCart } from '../../api/commerce';
 import { createReview, deleteReview, fetchReviews, updateReview } from '../../api/reviews';
 import type { ReviewPayload } from '../../api/reviews';
 import { useAuthUser } from '../auth/useAuth';
+import Select from '../../components/Select';
 import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import useDocumentMeta from '../../lib/useDocumentMeta';
 import type { Cart, Review } from '../../types/api';
 
@@ -140,7 +142,7 @@ export default function CourseDetailPage() {
                     </p>
                     {course.status !== 'published' && (
                         <p className="badge-amber mt-4">
-                            Preview mode — status: {course.status.replace('_', ' ')}
+                            Preview mode — status: {formatSnakeCase(course.status)}
                             {course.rejection_reason && <> — {course.rejection_reason}</>}
                         </p>
                     )}
@@ -343,17 +345,12 @@ function ReviewForm({
             className="card mb-4 p-5"
         >
             <label className="label">{heading}</label>
-            <select
+            <Select
                 value={rating}
-                onChange={(e: ChangeEvent<HTMLSelectElement>) => setRating(Number(e.target.value))}
-                className="input w-auto"
-            >
-                {[5, 4, 3, 2, 1].map((n) => (
-                    <option key={n} value={n}>
-                        {n} star{n === 1 ? '' : 's'}
-                    </option>
-                ))}
-            </select>
+                onChange={setRating}
+                options={[5, 4, 3, 2, 1].map((n) => ({ value: n, label: `${n} star${n === 1 ? '' : 's'}` }))}
+                className="w-auto"
+            />
             <textarea
                 value={comment}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
