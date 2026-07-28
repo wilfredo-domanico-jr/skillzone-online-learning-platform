@@ -95,6 +95,34 @@ class CourseAuthoringTest extends TestCase
         $this->assertSame(1, \App\Models\Lesson::find($lessonOne['id'])->position);
     }
 
+    public function test_an_instructor_can_filter_their_courses_by_status(): void
+    {
+        $instructor = $this->instructor();
+        Course::factory()->for($instructor, 'instructor')->create(['title' => 'Draft Course']);
+        Course::factory()->for($instructor, 'instructor')->published()->create(['title' => 'Live Course']);
+
+        $response = $this->actingAs($instructor)
+            ->getJson('/api/v1/instructor/courses?status=published')
+            ->assertOk();
+
+        $response->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Live Course');
+    }
+
+    public function test_an_instructor_can_search_their_courses_by_title(): void
+    {
+        $instructor = $this->instructor();
+        Course::factory()->for($instructor, 'instructor')->create(['title' => 'Mastering Laravel']);
+        Course::factory()->for($instructor, 'instructor')->create(['title' => 'Intro to Design']);
+
+        $response = $this->actingAs($instructor)
+            ->getJson('/api/v1/instructor/courses?search=laravel')
+            ->assertOk();
+
+        $response->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Mastering Laravel');
+    }
+
     public function test_an_instructor_can_upload_a_course_thumbnail(): void
     {
         Storage::fake('public');

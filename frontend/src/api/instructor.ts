@@ -3,6 +3,7 @@ import type {
     Course,
     CourseLevel,
     CourseSection,
+    CourseStatus,
     InstructorApplication,
     InstructorPayout,
     Lesson,
@@ -20,6 +21,8 @@ export interface InstructorApplicationPayload {
 export interface InstructorCourseListParams {
     page?: number;
     per_page?: number;
+    status?: CourseStatus;
+    search?: string;
     [key: string]: unknown;
 }
 

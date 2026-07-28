@@ -25,6 +25,10 @@ class CourseController extends Controller
     {
         $courses = $request->user()->courses()
             ->with('category')
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('title', 'like', '%'.$request->string('search').'%');
+            })
             ->latest()
             ->paginate($request->integer('per_page', 15));
 
