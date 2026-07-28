@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthUser, useLogout } from '../../features/auth/useAuth';
 import { fetchCart } from '../../api/commerce';
 import NotificationBell from '../../components/NotificationBell';
+import Footer from '../../components/Footer';
 import { useConfirm } from '../../lib/useConfirm';
 
 interface NavItemProps {
@@ -42,7 +43,7 @@ export default function AppLayout() {
         .toUpperCase();
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="flex min-h-screen flex-col bg-slate-50">
             <nav className="sticky top-0 z-40 border-b border-white/5 bg-ink-950">
                 <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
                     <div className="flex min-w-0 items-center gap-5">
@@ -127,9 +128,10 @@ export default function AppLayout() {
                     </div>
                 </div>
             </nav>
-            <main className="mx-auto max-w-7xl px-6 py-8">
+            <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-8">
                 <Outlet />
             </main>
+            <Footer />
             {confirmDialog}
         </div>
     );

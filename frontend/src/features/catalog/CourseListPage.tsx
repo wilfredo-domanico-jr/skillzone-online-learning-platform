@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Pagination from '../../components/Pagination';
 import Select from '../../components/Select';
 import SkeletonCard from '../../components/SkeletonCard';
@@ -17,8 +17,11 @@ const GRADIENTS = [
 ];
 
 export default function CourseListPage() {
+    // Read the initial category from the URL so links like the footer's
+    // category shortcuts (/courses?category=design) land pre-filtered.
+    const [searchParams] = useSearchParams();
     const [search, setSearch] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState(() => searchParams.get('category') ?? '');
     const [price, setPrice] = useState<'' | 'free' | 'paid'>('');
     const [sort, setSort] = useState<'' | 'price_asc' | 'price_desc' | 'rating'>('');
     const [page, setPage] = useState(1);
