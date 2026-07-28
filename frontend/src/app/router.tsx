@@ -4,6 +4,7 @@ import type { RouteObject } from 'react-router-dom';
 import GuestLayout from './layouts/GuestLayout';
 import AppLayout from './layouts/AppLayout';
 import RequireAuth from './RequireAuth';
+import RequireGuest from './RequireGuest';
 import NotFoundPage from './NotFoundPage';
 import ForbiddenPage from './ForbiddenPage';
 import LoginPage from '../features/auth/LoginPage';
@@ -42,8 +43,22 @@ export const router = createBrowserRouter([
     {
         element: <GuestLayout />,
         children: [
-            { path: '/login', element: <LoginPage /> },
-            { path: '/register', element: <RegisterPage /> },
+            {
+                path: '/login',
+                element: (
+                    <RequireGuest>
+                        <LoginPage />
+                    </RequireGuest>
+                ),
+            },
+            {
+                path: '/register',
+                element: (
+                    <RequireGuest>
+                        <RegisterPage />
+                    </RequireGuest>
+                ),
+            },
         ],
     },
     { path: '/auth/callback', element: <OAuthCallbackPage /> },
