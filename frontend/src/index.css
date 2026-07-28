@@ -64,6 +64,14 @@ body {
         @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 shadow-sm
         placeholder:text-slate-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30 focus:outline-none;
     }
+    /* The native <select> arrow sits flush at the edge with no breathing
+       room — swap it for a custom chevron with proper spacing instead. */
+    select.input {
+        @apply appearance-none bg-no-repeat pr-10;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+    }
     .label {
         @apply mb-1.5 block text-sm font-medium text-ink-700;
     }
