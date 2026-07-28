@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        // Applies the 'api' RateLimiter (registered in AppServiceProvider) to
+        // every /api/* route by default — previously nothing was throttled
+        // except the routes that had their own explicit `throttle:` middleware.
+        $middleware->throttleApi();
+
         // Applies to every /api/* request, but is a no-op for guests and
         // non-suspended users — simplest way to guarantee a suspension takes
         // effect immediately across all authenticated routes.

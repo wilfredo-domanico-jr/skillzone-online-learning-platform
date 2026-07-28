@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class LessonVideoDetail extends Model
 {
@@ -15,8 +17,12 @@ class LessonVideoDetail extends Model
         return $this->belongsTo(Lesson::class);
     }
 
+    /**
+     * A short-lived signed URL rather than a permanent public disk link —
+     * see LessonContentStreamController for why.
+     */
     public function url(): string
     {
-        return Storage::disk($this->disk)->url($this->path);
+        return URL::temporarySignedRoute('lessons.video.stream', now()->addHours(4), ['videoDetail' => $this->id]);
     }
 }

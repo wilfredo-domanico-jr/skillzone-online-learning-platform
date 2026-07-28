@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1\Instructor;
 
 use App\Enums\LessonType;
@@ -28,10 +30,10 @@ class LessonContentController extends Controller
             'video' => ['required', 'file', 'mimetypes:video/mp4,video/webm,video/quicktime', 'max:512000'],
         ]);
 
-        $path = $request->file('video')->store('lessons/'.$lesson->id.'/video', 'public');
+        $path = $request->file('video')->store('lessons/'.$lesson->id.'/video', 'local');
 
         $lesson->videoDetail()->updateOrCreate([], [
-            'disk' => 'public',
+            'disk' => 'local',
             'path' => $path,
         ]);
 
@@ -63,15 +65,20 @@ class LessonContentController extends Controller
         $this->authorize('update', $lesson->section->course);
 
         $request->validate([
-            'file' => ['required', 'file', 'max:51200'],
+            // Whitelisted by both extension and detected MIME type — an
+            // unrestricted upload here would land on a webroot-reachable
+            // disk (see LessonContentStreamController for how content is
+            // now actually served), so this list is the only thing standing
+            // between an instructor account and uploading an executable file.
+            'file' => ['required', 'file', 'max:51200', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,txt,png,jpg,jpeg'],
         ]);
 
         $file = $request->file('file');
-        $path = $file->store('lessons/'.$lesson->id.'/attachments', 'public');
+        $path = $file->store('lessons/'.$lesson->id.'/attachments', 'local');
 
         $lesson->attachments()->create([
             'file_name' => $file->getClientOriginalName(),
-            'disk' => 'public',
+            'disk' => 'local',
             'path' => $path,
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),

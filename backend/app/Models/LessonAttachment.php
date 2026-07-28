@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 /**
  * Maps to the `lesson_resources` table — named Attachment on the PHP side to
@@ -21,8 +23,12 @@ class LessonAttachment extends Model
         return $this->belongsTo(Lesson::class);
     }
 
+    /**
+     * A short-lived signed URL rather than a permanent public disk link —
+     * see LessonContentStreamController for why.
+     */
     public function url(): string
     {
-        return Storage::disk($this->disk)->url($this->path);
+        return URL::temporarySignedRoute('lessons.attachments.download', now()->addHours(4), ['attachment' => $this->id]);
     }
 }

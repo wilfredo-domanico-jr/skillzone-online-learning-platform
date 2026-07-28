@@ -29,11 +29,11 @@ use App\Http\Controllers\Api\V1\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::post('/auth/register', [AuthController::class, 'register'])->middleware('guest');
+    Route::post('/auth/register', [AuthController::class, 'register'])->middleware(['guest', 'throttle:5,1']);
     Route::post('/auth/login', [AuthController::class, 'login'])->middleware('guest');
     Route::post('/auth/demo-login', [AuthController::class, 'demoLogin'])->middleware('guest');
-    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('guest');
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('guest');
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware(['guest', 'throttle:5,1']);
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware(['guest', 'throttle:10,1']);
 
     // Public catalog — no auth required, but $request->user() still resolves
     // opportunistically from the session cookie when present (e.g. so an
@@ -73,7 +73,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/cart/items', [CartController::class, 'store']);
         Route::delete('/cart/items/{course}', [CartController::class, 'destroy']);
 
-        Route::post('/coupons/validate', [CouponController::class, 'validate']);
+        Route::post('/coupons/validate', [CouponController::class, 'validate'])->middleware('throttle:10,1');
 
         Route::post('/checkout/session', [CheckoutController::class, 'store']);
 
