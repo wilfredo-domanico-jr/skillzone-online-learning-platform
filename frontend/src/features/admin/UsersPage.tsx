@@ -5,12 +5,14 @@ import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAdminUsers, suspendUser, unsuspendUser } from '../../api/admin';
 import { useAuthUser } from '../auth/useAuth';
 import { generalError } from '../../lib/apiErrors';
+import { useConfirm } from '../../lib/useConfirm';
 
 export default function UsersPage() {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
     const { data: me } = useAuthUser();
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const { data, isLoading } = useQuery({
         queryKey: ['admin', 'users', search, page],
@@ -58,7 +60,12 @@ export default function UsersPage() {
                         {u.suspended_at ? (
                             <button
                                 type="button"
-                                onClick={() => unsuspend.mutate(u.id)}
+                                onClick={() =>
+                                    requestConfirm(
+                                        { title: 'Unsuspend this user?', description: `${u.name} will regain account access.`, confirmLabel: 'Unsuspend', danger: false },
+                                        () => unsuspend.mutate(u.id),
+                                    )
+                                }
                                 className="btn-primary !px-4 !py-2"
                             >
                                 Unsuspend
@@ -67,7 +74,12 @@ export default function UsersPage() {
                             <button
                                 type="button"
                                 disabled={u.id === me?.id}
-                                onClick={() => suspend.mutate(u.id)}
+                                onClick={() =>
+                                    requestConfirm(
+                                        { title: 'Suspend this user?', description: `${u.name} will be immediately signed out and blocked from logging in.`, confirmLabel: 'Suspend' },
+                                        () => suspend.mutate(u.id),
+                                    )
+                                }
                                 className="btn-outline !px-4 !py-2 text-red-600 hover:border-red-400 hover:text-red-700"
                             >
                                 Suspend
@@ -79,6 +91,7 @@ export default function UsersPage() {
             </div>
 
             {data && <Pagination meta={data.meta} onPageChange={setPage} />}
+            {confirmDialog}
         </div>
     );
 }

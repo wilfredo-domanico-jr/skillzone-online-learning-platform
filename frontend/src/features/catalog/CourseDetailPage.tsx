@@ -13,6 +13,7 @@ import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
 import { formatSnakeCase } from '../../lib/formatSnakeCase';
+import { useConfirm } from '../../lib/useConfirm';
 import useDocumentMeta from '../../lib/useDocumentMeta';
 import type { Cart, Review } from '../../types/api';
 
@@ -29,6 +30,7 @@ export default function CourseDetailPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data: user } = useAuthUser();
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const { data: course, isLoading } = useQuery({
         queryKey: ['courses', slug],
@@ -239,7 +241,12 @@ export default function CourseDetailPage() {
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => removeReview.mutate(review.id)}
+                                                onClick={() =>
+                                                    requestConfirm(
+                                                        { title: 'Delete this review?', confirmLabel: 'Delete review' },
+                                                        () => removeReview.mutate(review.id),
+                                                    )
+                                                }
                                                 className="font-medium text-red-600 hover:underline"
                                             >
                                                 Delete
@@ -308,6 +315,7 @@ export default function CourseDetailPage() {
                     {addCart.isError && <p className="mt-2 text-sm text-red-600">{generalError(addCart.error)}</p>}
                 </aside>
             </div>
+            {confirmDialog}
         </div>
     );
 }

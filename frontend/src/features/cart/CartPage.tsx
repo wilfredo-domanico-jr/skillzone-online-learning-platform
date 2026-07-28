@@ -11,12 +11,14 @@ import {
 import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
+import { useConfirm } from '../../lib/useConfirm';
 
 export default function CartPage() {
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const [couponCode, setCouponCode] = useState('');
     const [couponPreview, setCouponPreview] = useState<CouponValidationResponse | null>(null);
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const { data: cart, isLoading } = useQuery({ queryKey: ['cart'], queryFn: fetchCart });
 
@@ -88,7 +90,16 @@ export default function CartPage() {
                                     <span className="text-slate-600">{formatPrice(item.course.price)}</span>
                                     <button
                                         type="button"
-                                        onClick={() => remove.mutate(item.course.id)}
+                                        onClick={() =>
+                                            requestConfirm(
+                                                {
+                                                    title: 'Remove from cart?',
+                                                    description: `"${item.course.title}" will be removed from your cart.`,
+                                                    confirmLabel: 'Remove',
+                                                },
+                                                () => remove.mutate(item.course.id),
+                                            )
+                                        }
                                         className="text-sm font-medium text-red-600 hover:underline"
                                     >
                                         Remove
@@ -147,6 +158,7 @@ export default function CartPage() {
                     {checkout.isError && <p className="mt-2 text-sm text-red-600">{generalError(checkout.error)}</p>}
                 </>
             )}
+            {confirmDialog}
         </div>
     );
 }

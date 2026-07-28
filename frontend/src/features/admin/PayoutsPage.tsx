@@ -8,12 +8,14 @@ import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
 import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
+import { useConfirm } from '../../lib/useConfirm';
 import type { PayoutStatus } from '../../types/api';
 
 export default function PayoutsPage() {
     const [status, setStatus] = useState<PayoutStatus | ''>('pending');
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const { data, isLoading } = useQuery({
         queryKey: ['admin', 'payouts', status, page],
@@ -65,7 +67,17 @@ export default function PayoutsPage() {
                             {payout.status !== 'paid' && (
                                 <button
                                     type="button"
-                                    onClick={() => markPaid.mutate(payout.id)}
+                                    onClick={() =>
+                                        requestConfirm(
+                                            {
+                                                title: 'Mark this payout as paid?',
+                                                description: `Net ${formatPrice(payout.net_amount)} to ${payout.instructor?.name}. This can't be undone in the UI.`,
+                                                confirmLabel: 'Mark paid',
+                                                danger: false,
+                                            },
+                                            () => markPaid.mutate(payout.id),
+                                        )
+                                    }
                                     disabled={markPaid.isPending}
                                     className="btn-primary !px-4 !py-2"
                                 >
@@ -79,6 +91,7 @@ export default function PayoutsPage() {
             </div>
 
             {data && <Pagination meta={data.meta} onPageChange={setPage} />}
+            {confirmDialog}
         </div>
     );
 }

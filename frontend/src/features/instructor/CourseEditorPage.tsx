@@ -25,6 +25,7 @@ import { fetchMyCourses } from '../../api/instructor';
 import { generalError } from '../../lib/apiErrors';
 import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import { swapPosition } from '../../lib/reorder';
+import { useConfirm } from '../../lib/useConfirm';
 import type { CourseSection, Lesson, LessonType } from '../../types/api';
 import QuizBuilder from './QuizBuilder';
 
@@ -292,6 +293,7 @@ interface SectionEditorProps {
 
 function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onChange }: SectionEditorProps) {
     const [lessonType, setLessonType] = useState<LessonType>('article');
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const move = useMutation({
         mutationFn: (ids: number[]) => reorderSections(courseId, ids),
@@ -334,7 +336,16 @@ function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onCh
                     </button>
                     <button
                         type="button"
-                        onClick={() => remove.mutate()}
+                        onClick={() =>
+                            requestConfirm(
+                                {
+                                    title: 'Delete this section?',
+                                    description: `"${section.title}" and all of its lessons will be permanently deleted.`,
+                                    confirmLabel: 'Delete section',
+                                },
+                                () => remove.mutate(),
+                            )
+                        }
                         className="ml-2 font-medium text-red-600 hover:underline"
                     >
                         Delete
@@ -385,6 +396,7 @@ function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onCh
                     Add lesson
                 </button>
             </form>
+            {confirmDialog}
         </div>
     );
 }
@@ -400,6 +412,7 @@ interface LessonEditorProps {
 
 function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChange }: LessonEditorProps) {
     const [articleBody, setArticleBody] = useState(lesson.article?.body_html ?? '');
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const move = useMutation({
         mutationFn: (ids: number[]) => reorderLessons(sectionId, ids),
@@ -462,7 +475,16 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
                     </button>
                     <button
                         type="button"
-                        onClick={() => remove.mutate()}
+                        onClick={() =>
+                            requestConfirm(
+                                {
+                                    title: 'Delete this lesson?',
+                                    description: `"${lesson.title}" will be permanently deleted.`,
+                                    confirmLabel: 'Delete lesson',
+                                },
+                                () => remove.mutate(),
+                            )
+                        }
                         className="font-medium text-red-600 hover:underline"
                     >
                         Delete
@@ -512,6 +534,7 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
                 )}
                 {lesson.type === 'quiz' && <QuizBuilder lessonId={lesson.id} />}
             </DisclosurePanel>
+            {confirmDialog}
         </Disclosure>
     );
 }

@@ -8,6 +8,7 @@ import { createCourse, deleteCourse, fetchMyCourses } from '../../api/instructor
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
 import { formatSnakeCase } from '../../lib/formatSnakeCase';
+import { useConfirm } from '../../lib/useConfirm';
 import type { CourseStatus } from '../../types/api';
 
 const STATUS_STYLES: Record<CourseStatus, string> = {
@@ -22,9 +23,9 @@ export default function InstructorCoursesPage() {
     const [status, setStatus] = useState<CourseStatus | ''>('');
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
-    const [deletingId, setDeletingId] = useState<number | null>(null);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const { data, isLoading } = useQuery({
         queryKey: ['instructor', 'courses', status, search, page],
@@ -43,10 +44,7 @@ export default function InstructorCoursesPage() {
 
     const remove = useMutation({
         mutationFn: deleteCourse,
-        onSuccess: () => {
-            setDeletingId(null);
-            invalidate();
-        },
+        onSuccess: invalidate,
     });
 
     const withFilterReset = <T,>(setter: (value: T) => void) => (value: T) => {
@@ -152,42 +150,30 @@ export default function InstructorCoursesPage() {
                                 <p className="mt-2 text-xs text-red-600">Rejected: {course.rejection_reason}</p>
                             )}
 
-                            {deletingId === course.id ? (
-                                <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-50 p-2">
-                                    <span className="flex-1 text-xs text-red-700">Delete this course?</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => remove.mutate(course.id)}
-                                        disabled={remove.isPending}
-                                        className="btn-outline !px-2 !py-1 !text-xs text-red-600 hover:border-red-400"
-                                    >
-                                        Confirm
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setDeletingId(null)}
-                                        className="text-xs font-medium text-slate-500 hover:text-ink-900"
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-                                    <Link
-                                        to={`/instructor/courses/${course.id}`}
-                                        className="btn-outline flex-1 !px-3 !py-1.5 !text-xs"
-                                    >
-                                        Edit
-                                    </Link>
-                                    <button
-                                        type="button"
-                                        onClick={() => setDeletingId(course.id)}
-                                        className="text-xs font-medium text-red-600 hover:underline"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            )}
+                            <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                                <Link
+                                    to={`/instructor/courses/${course.id}`}
+                                    className="btn-outline flex-1 !px-3 !py-1.5 !text-xs"
+                                >
+                                    Edit
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        requestConfirm(
+                                            {
+                                                title: 'Delete this course?',
+                                                description: `"${course.title}" and its full curriculum will be permanently deleted.`,
+                                                confirmLabel: 'Delete course',
+                                            },
+                                            () => remove.mutate(course.id),
+                                        )
+                                    }
+                                    className="text-xs font-medium text-red-600 hover:underline"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -201,6 +187,7 @@ export default function InstructorCoursesPage() {
             </div>
 
             {data && <Pagination meta={data.meta} onPageChange={setPage} />}
+            {confirmDialog}
         </div>
     );
 }

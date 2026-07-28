@@ -13,6 +13,7 @@ import Select from '../../components/Select';
 import Skeleton from '../../components/Skeleton';
 import { DEFAULT_PASSING_SCORE_PERCENT } from '../../lib/constants';
 import { formatSnakeCase } from '../../lib/formatSnakeCase';
+import { useConfirm } from '../../lib/useConfirm';
 import type { QuizQuestion, QuizQuestionType } from '../../types/api';
 
 // Local draft type for the answer-editing form only: a newly-added option
@@ -174,6 +175,8 @@ interface QuestionEditorProps {
 }
 
 function QuestionEditor({ question, onSave, onDelete }: QuestionEditorProps) {
+    const { requestConfirm, confirmDialog } = useConfirm();
+
     return (
         <Disclosure as="div" className="card p-3">
             {({ open, close }) =>
@@ -196,10 +199,20 @@ function QuestionEditor({ question, onSave, onDelete }: QuestionEditorProps) {
                             <DisclosureButton className="font-medium text-brand-600 hover:underline">
                                 Edit
                             </DisclosureButton>
-                            <button type="button" onClick={onDelete} className="font-medium text-red-600 hover:underline">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    requestConfirm(
+                                        { title: 'Delete this question?', confirmLabel: 'Delete question' },
+                                        onDelete,
+                                    )
+                                }
+                                className="font-medium text-red-600 hover:underline"
+                            >
                                 Delete
                             </button>
                         </div>
+                        {confirmDialog}
                     </div>
                 ) : (
                     <QuestionForm

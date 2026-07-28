@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthUser, useLogout } from '../../features/auth/useAuth';
 import { fetchCart } from '../../api/commerce';
 import NotificationBell from '../../components/NotificationBell';
+import { useConfirm } from '../../lib/useConfirm';
 
 interface NavItemProps {
     to: string;
@@ -29,6 +30,7 @@ export default function AppLayout() {
     const { data: user, isLoading } = useAuthUser();
     const logout = useLogout();
     const { data: cart } = useQuery({ queryKey: ['cart'], queryFn: fetchCart, enabled: !!user });
+    const { requestConfirm, confirmDialog } = useConfirm();
 
     const isInstructor = user?.roles?.some((r) => r.name === 'instructor');
     const isAdmin = user?.roles?.some((r) => r.name === 'admin');
@@ -96,7 +98,12 @@ export default function AppLayout() {
                                     </span>
                                     <button
                                         type="button"
-                                        onClick={() => logout.mutate()}
+                                        onClick={() =>
+                                            requestConfirm(
+                                                { title: 'Log out?', description: 'You will need to sign in again to continue.', confirmLabel: 'Log out' },
+                                                () => logout.mutate(),
+                                            )
+                                        }
                                         className="text-sm font-medium text-white/50 hover:text-white"
                                     >
                                         Log out
@@ -123,6 +130,7 @@ export default function AppLayout() {
             <main className="mx-auto max-w-7xl px-6 py-8">
                 <Outlet />
             </main>
+            {confirmDialog}
         </div>
     );
 }
