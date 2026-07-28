@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import FileButton from '../../components/FileButton';
+import Select from '../../components/Select';
 import Skeleton from '../../components/Skeleton';
 import { fetchCourseCurriculum } from '../../api/catalog';
 import {
@@ -20,6 +22,7 @@ import {
 import type { CreateLessonPayload } from '../../api/instructor';
 import { fetchMyCourses } from '../../api/instructor';
 import { generalError } from '../../lib/apiErrors';
+import { formatSnakeCase } from '../../lib/formatSnakeCase';
 import { swapPosition } from '../../lib/reorder';
 import type { CourseSection, Lesson, LessonType } from '../../types/api';
 import QuizBuilder from './QuizBuilder';
@@ -131,7 +134,7 @@ export default function CourseEditorPage() {
             <div className="mb-6 flex items-center justify-between gap-3">
                 <h1 className="font-display text-xl font-semibold text-ink-900">{course.title}</h1>
                 <div className="flex shrink-0 items-center gap-2">
-                    <span className="badge-slate">{course.status.replace('_', ' ')}</span>
+                    <span className="badge-slate">{formatSnakeCase(course.status)}</span>
                     {['draft', 'rejected'].includes(course.status) && (
                         <button
                             type="button"
@@ -173,14 +176,11 @@ export default function CourseEditorPage() {
                                 </div>
                             )}
                             <div>
-                                <input
-                                    type="file"
+                                <FileButton
+                                    label={course.thumbnail_url ? 'Replace image' : 'Upload image'}
                                     accept="image/jpeg,image/png,image/webp"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) uploadThumbnail.mutate(file);
-                                    }}
-                                    className="block text-sm text-slate-600"
+                                    disabled={uploadThumbnail.isPending}
+                                    onSelect={(file) => uploadThumbnail.mutate(file)}
                                 />
                                 <p className="mt-1 text-xs text-slate-400">JPG, PNG, or WEBP. Up to 5MB.</p>
                                 {uploadThumbnail.isPending && (
@@ -290,6 +290,8 @@ interface SectionEditorProps {
 }
 
 function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onChange }: SectionEditorProps) {
+    const [lessonType, setLessonType] = useState<LessonType>('article');
+
     const move = useMutation({
         mutationFn: (ids: number[]) => reorderSections(courseId, ids),
         onSuccess: onChange,
@@ -358,21 +360,26 @@ function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onCh
                     e.preventDefault();
                     const form = e.currentTarget;
                     const title = (form.elements.namedItem('lessonTitle') as HTMLInputElement).value.trim();
-                    const type = (form.elements.namedItem('lessonType') as HTMLSelectElement).value as LessonType;
                     if (title) {
-                        addLesson.mutate({ title, type });
+                        addLesson.mutate({ title, type: lessonType });
                         form.reset();
+                        setLessonType('article');
                     }
                 }}
                 className="flex gap-2 p-3"
             >
                 <input name="lessonTitle" placeholder="New lesson title…" className="input flex-1 !text-sm" />
-                <select name="lessonType" className="input w-auto !text-sm">
-                    <option value="article">Article</option>
-                    <option value="video">Video</option>
-                    <option value="resource">Resource</option>
-                    <option value="quiz">Quiz</option>
-                </select>
+                <Select
+                    value={lessonType}
+                    onChange={setLessonType}
+                    className="w-auto !text-sm"
+                    options={[
+                        { value: 'article', label: 'Article' },
+                        { value: 'video', label: 'Video' },
+                        { value: 'resource', label: 'Resource' },
+                        { value: 'quiz', label: 'Quiz' },
+                    ]}
+                />
                 <button type="submit" className="btn-outline !text-sm">
                     Add lesson
                 </button>
@@ -492,14 +499,11 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
                             {lesson.video && (
                                 <video src={lesson.video.url} controls className="mb-2 max-h-48 w-full rounded-xl" />
                             )}
-                            <input
-                                type="file"
+                            <FileButton
+                                label={lesson.video ? 'Replace video' : 'Upload video'}
                                 accept="video/*"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) uploadVideo.mutate(file);
-                                }}
-                                className="text-sm text-slate-600"
+                                disabled={uploadVideo.isPending}
+                                onSelect={(file) => uploadVideo.mutate(file)}
                             />
                             {uploadVideo.isPending && <p className="mt-1 text-xs text-slate-500">Uploading…</p>}
                         </div>
