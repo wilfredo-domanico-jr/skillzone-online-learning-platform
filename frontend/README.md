@@ -4,7 +4,7 @@ The React single-page app for the SkillZone learning marketplace — talks to th
 
 ## Stack
 
-React 19 (JSX) · React Router · TanStack React Query · React Hook Form · Tailwind CSS v4 · Vite
+React 19 (TypeScript/TSX) · React Router · TanStack React Query · React Hook Form · Tailwind CSS v4 · Vite
 
 ## Setup
 
@@ -19,7 +19,8 @@ cp .env.example .env
 
 ```bash
 npm run dev        # SPA dev server at http://localhost:5173
-npm run build       # production build to dist/
+npm run build       # typecheck (tsc -b), then production build to dist/
+npm run typecheck   # type-check only, no build output
 npm run preview     # preview the production build
 npm run lint         # oxlint
 ```
@@ -30,14 +31,15 @@ The backend must also be running (see `../backend/README.md`) — the SPA calls 
 
 ```
 src/
+  types/api.ts  shared domain types (User, Course, Lesson, Quiz, Order, ...), matching the backend's JsonResource shapes
   api/          axios client + per-domain endpoint modules (auth, catalog, instructor, admin, learning, commerce, quiz, reviews, notifications)
   app/          router, RequireAuth route guard, layouts (GuestLayout, AppLayout)
   features/     one folder per domain — auth/, dashboard/, catalog/, instructor/, admin/, learning/, cart/, orders/
   components/   shared UI primitives (NotificationBell, FormError, ...)
-  lib/          apiErrors.js (flattens Laravel 422 errors), useDocumentMeta.js (basic per-page SEO)
+  lib/          apiErrors.ts (flattens Laravel 422 errors), useDocumentMeta.ts (basic per-page SEO)
 ```
 
-Auth state isn't a separate context/store — it's just the React Query cache for `['auth', 'me']` (`useAuthUser()` in `features/auth/useAuth.js`), read wherever it's needed.
+Auth state isn't a separate context/store — it's just the React Query cache for `['auth', 'me']` (`useAuthUser()` in `features/auth/useAuth.ts`), read wherever it's needed.
 
 ## Design system
 

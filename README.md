@@ -5,7 +5,7 @@ A Udemy-style online learning marketplace — a decoupled **Laravel API backend*
 ## Stack
 
 - **Backend:** PHP 8.2, Laravel 12, MySQL, Sanctum (SPA cookie auth), Spatie Permission, Stripe
-- **Frontend:** React 19, React Router, TanStack React Query, React Hook Form, Tailwind CSS v4, Vite
+- **Frontend:** React 19 (TypeScript), React Router, TanStack React Query, React Hook Form, Tailwind CSS v4, Vite
 
 ## Repo layout
 
