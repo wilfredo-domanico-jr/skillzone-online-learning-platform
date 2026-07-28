@@ -1,0 +1,88 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-online_learning}
+      MYSQL_USER: ${DB_USERNAME:-skillzone}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "${DB_FORWARD_PORT:-3307}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Backend/queue both need the same image and DB connection — the app's own
+  # backend/.env supplies everything else (Stripe/OAuth keys, APP_KEY, etc.);
+  # the `environment:` block below deliberately overrides only the DB_* keys
+  # so the containers always talk to the `db` service above regardless of
+  # what backend/.env has configured for local (non-Docker) development.
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-online_learning}
+      DB_USERNAME: ${DB_USERNAME:-skillzone}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - backend_storage:/var/www/html/storage/app
+
+  queue:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-online_learning}
+      DB_USERNAME: ${DB_USERNAME:-skillzone}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      # The backend container already runs migrations on boot — if this one
+      # did too, both would race the same schema changes on a fresh DB.
+      SKIP_MIGRATIONS: "true"
+    # Keeps the image's entrypoint.sh (DB wait + storage:link skipped since
+    # SKIP_MIGRATIONS is set), only swapping the final command from
+    # `php artisan serve` to the queue worker.
+    command: ["php", "artisan", "queue:work", "--tries=1"]
+    volumes:
+      - backend_storage:/var/www/html/storage/app
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+        VITE_DEMO_MODE: ${VITE_DEMO_MODE:-false}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+
+volumes:
+  db_data:
+  backend_storage:

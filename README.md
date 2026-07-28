@@ -41,6 +41,38 @@ composer dev
 
 By default the backend uses a MySQL database (`DB_CONNECTION`, `DB_DATABASE`, etc. in `backend/.env`) — create the database yourself before running migrations. The test suite always runs against an isolated in-memory SQLite DB regardless of your local `.env`.
 
+## Docker
+
+```bash
+cd backend && cp .env.example .env
+# generate a key without needing PHP installed locally:
+docker run --rm php:8.2-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
+# paste the printed value into backend/.env as APP_KEY=..., then:
+cd ..
+docker compose up --build
+```
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+
+This runs four containers: `db` (MySQL 8), `backend` (the API, migrating on
+boot), `queue` (a `queue:work` worker sharing the same image), and
+`frontend` (an nginx-served production build of the SPA). `backend/.env`
+supplies everything except the DB connection itself — `docker-compose.yml`
+forces `DB_HOST=db`/etc. regardless of what's in that file, so the same
+`.env` works whether you're running natively or in Docker.
+
+Two things only take effect at image build time, since Vite inlines them
+into the built JS: `VITE_API_URL` and `VITE_DEMO_MODE`. Override them via a
+root `.env` (`VITE_API_URL=...`) before `docker compose up --build` rather
+than editing `frontend/.env`, which the frontend container never reads.
+
+Seed demo data once the containers are up:
+
+```bash
+docker compose exec backend php artisan db:seed
+```
+
 ## What's built
 
 - **Auth** — email/password + Google/Facebook OAuth (Sanctum SPA cookie flow), role-based access (student / instructor / admin)
