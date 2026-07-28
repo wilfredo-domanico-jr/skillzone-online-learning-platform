@@ -1,3 +1,4 @@
+import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
@@ -398,7 +399,6 @@ interface LessonEditorProps {
 }
 
 function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChange }: LessonEditorProps) {
-    const [expanded, setExpanded] = useState(false);
     const [articleBody, setArticleBody] = useState(lesson.article?.body_html ?? '');
 
     const move = useMutation({
@@ -428,24 +428,21 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
     };
 
     return (
-        <li className="p-3">
+        <Disclosure as="li" className="p-3">
             <div className="flex items-center justify-between text-sm">
-                <button
-                    type="button"
-                    onClick={() => setExpanded(!expanded)}
-                    className="text-left font-medium text-ink-800 hover:text-brand-700"
-                >
+                <DisclosureButton className="text-left font-medium text-ink-800 hover:text-brand-700">
                     {lesson.title} <span className="font-normal text-slate-400">({lesson.type})</span>
-                </button>
+                </DisclosureButton>
                 <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1 text-xs text-slate-500">
-                        <input
-                            type="checkbox"
+                    <label className="flex items-center gap-2 text-xs text-slate-500">
+                        Free preview
+                        <Switch
                             checked={lesson.is_previewable}
                             onChange={() => togglePreview.mutate()}
-                            className="accent-brand-500"
-                        />
-                        Free preview
+                            className="group inline-flex h-5 w-9 items-center rounded-full bg-slate-200 transition-colors data-[checked]:bg-brand-500"
+                        >
+                            <span className="inline-block size-3.5 translate-x-1 rounded-full bg-white transition-transform group-data-[checked]:translate-x-[18px]" />
+                        </Switch>
                     </label>
                     <button
                         type="button"
@@ -473,50 +470,48 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
                 </div>
             </div>
 
-            {expanded && (
-                <div className="mt-2 rounded-xl bg-slate-50 p-3">
-                    {lesson.type === 'article' && (
-                        <div>
-                            <textarea
-                                rows={4}
-                                className="input !text-sm"
-                                value={articleBody}
-                                onChange={(e) => setArticleBody(e.target.value)}
-                                placeholder="Lesson body (HTML)…"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => saveArticle.mutate()}
-                                disabled={saveArticle.isPending}
-                                className="btn-dark mt-2 !px-3 !py-1.5 !text-xs"
-                            >
-                                Save content
-                            </button>
-                        </div>
-                    )}
-                    {lesson.type === 'video' && (
-                        <div>
-                            {lesson.video && (
-                                <video src={lesson.video.url} controls className="mb-2 max-h-48 w-full rounded-xl" />
-                            )}
-                            <FileButton
-                                label={lesson.video ? 'Replace video' : 'Upload video'}
-                                accept="video/*"
-                                disabled={uploadVideo.isPending}
-                                onSelect={(file) => uploadVideo.mutate(file)}
-                            />
-                            {uploadVideo.isPending && <p className="mt-1 text-xs text-slate-500">Uploading…</p>}
-                        </div>
-                    )}
-                    {lesson.type === 'resource' && (
-                        <p className="text-xs text-slate-500">
-                            Attach downloadable files to this lesson (attachments API already supports this; UI coming
-                            soon).
-                        </p>
-                    )}
-                    {lesson.type === 'quiz' && <QuizBuilder lessonId={lesson.id} />}
-                </div>
-            )}
-        </li>
+            <DisclosurePanel className="mt-2 rounded-xl bg-slate-50 p-3">
+                {lesson.type === 'article' && (
+                    <div>
+                        <textarea
+                            rows={4}
+                            className="input !text-sm"
+                            value={articleBody}
+                            onChange={(e) => setArticleBody(e.target.value)}
+                            placeholder="Lesson body (HTML)…"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => saveArticle.mutate()}
+                            disabled={saveArticle.isPending}
+                            className="btn-dark mt-2 !px-3 !py-1.5 !text-xs"
+                        >
+                            Save content
+                        </button>
+                    </div>
+                )}
+                {lesson.type === 'video' && (
+                    <div>
+                        {lesson.video && (
+                            <video src={lesson.video.url} controls className="mb-2 max-h-48 w-full rounded-xl" />
+                        )}
+                        <FileButton
+                            label={lesson.video ? 'Replace video' : 'Upload video'}
+                            accept="video/*"
+                            disabled={uploadVideo.isPending}
+                            onSelect={(file) => uploadVideo.mutate(file)}
+                        />
+                        {uploadVideo.isPending && <p className="mt-1 text-xs text-slate-500">Uploading…</p>}
+                    </div>
+                )}
+                {lesson.type === 'resource' && (
+                    <p className="text-xs text-slate-500">
+                        Attach downloadable files to this lesson (attachments API already supports this; UI coming
+                        soon).
+                    </p>
+                )}
+                {lesson.type === 'quiz' && <QuizBuilder lessonId={lesson.id} />}
+            </DisclosurePanel>
+        </Disclosure>
     );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import type { ReactNode } from 'react';
 import Pagination from './Pagination';
 import Skeleton from './Skeleton';
@@ -33,9 +33,6 @@ export default function ModerationQueue<T extends { id: number }>({
     meta,
     onPageChange,
 }: ModerationQueueProps<T>) {
-    const [rejectingId, setRejectingId] = useState<number | null>(null);
-    const [reason, setReason] = useState('');
-
     return (
         <div>
             <p className="eyebrow">{eyebrow}</p>
@@ -62,52 +59,50 @@ export default function ModerationQueue<T extends { id: number }>({
                         </div>
                     ))}
                 {items?.map((item) => (
-                    <div key={item.id} className="card p-4">
-                        <div className="flex items-center justify-between">
-                            {renderHeader(item)}
-                            <div className="flex shrink-0 gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => onApprove(item.id)}
-                                    className="btn-primary !px-4 !py-2"
-                                >
-                                    Approve
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setRejectingId(rejectingId === item.id ? null : item.id)}
-                                    className="btn-outline !px-4 !py-2 text-red-600 hover:border-red-400 hover:text-red-700"
-                                >
-                                    Reject
-                                </button>
-                            </div>
-                        </div>
+                    <Disclosure key={item.id} as="div" className="card p-4">
+                        {({ close }) => (
+                            <>
+                                <div className="flex items-center justify-between">
+                                    {renderHeader(item)}
+                                    <div className="flex shrink-0 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => onApprove(item.id)}
+                                            className="btn-primary !px-4 !py-2"
+                                        >
+                                            Approve
+                                        </button>
+                                        <DisclosureButton className="btn-outline !px-4 !py-2 text-red-600 hover:border-red-400 hover:text-red-700">
+                                            Reject
+                                        </DisclosureButton>
+                                    </div>
+                                </div>
 
-                        {renderDetails?.(item)}
+                                {renderDetails?.(item)}
 
-                        {rejectingId === item.id && (
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    onReject(item.id, reason);
-                                    setRejectingId(null);
-                                    setReason('');
-                                }}
-                                className="mt-3 flex gap-2"
-                            >
-                                <input
-                                    required
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                    placeholder="Rejection reason…"
-                                    className="input flex-1"
-                                />
-                                <button type="submit" className="btn-outline !px-4 !py-2">
-                                    Confirm reject
-                                </button>
-                            </form>
+                                <DisclosurePanel
+                                    as="form"
+                                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                                        e.preventDefault();
+                                        const reason = new FormData(e.currentTarget).get('reason') as string;
+                                        onReject(item.id, reason);
+                                        close();
+                                    }}
+                                    className="mt-3 flex gap-2"
+                                >
+                                    <input
+                                        required
+                                        name="reason"
+                                        placeholder="Rejection reason…"
+                                        className="input flex-1"
+                                    />
+                                    <button type="submit" className="btn-outline !px-4 !py-2">
+                                        Confirm reject
+                                    </button>
+                                </DisclosurePanel>
+                            </>
                         )}
-                    </div>
+                    </Disclosure>
                 ))}
             </div>
 

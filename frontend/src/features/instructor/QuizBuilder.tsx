@@ -1,3 +1,4 @@
+import { Disclosure, DisclosureButton } from '@headlessui/react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -173,60 +174,52 @@ interface QuestionEditorProps {
 }
 
 function QuestionEditor({ question, onSave, onDelete }: QuestionEditorProps) {
-    const [editing, setEditing] = useState(false);
-
-    if (!editing) {
-        return (
-            <div className="card p-3">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <p className="font-medium text-ink-900">{question.question_text}</p>
-                        <p className="text-xs text-slate-500">
-                            {formatSnakeCase(question.type)} · {question.points} pt(s)
-                        </p>
-                        <ul className="mt-1 list-inside list-disc text-xs text-slate-600">
-                            {question.answers.map((a, i) => (
-                                <li key={a.id ?? i}>
-                                    {a.answer_text} {a.is_correct ? '✓' : ''}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="flex gap-2 text-xs">
-                        <button
-                            type="button"
-                            onClick={() => setEditing(true)}
-                            className="font-medium text-brand-600 hover:underline"
-                        >
-                            Edit
-                        </button>
-                        <button type="button" onClick={onDelete} className="font-medium text-red-600 hover:underline">
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="card p-3">
-            <QuestionForm
-                initialText={question.question_text}
-                initialType={question.type}
-                initialAnswers={question.answers.map((a) => ({
-                    id: a.id,
-                    answer_text: a.answer_text,
-                    is_correct: a.is_correct ?? false,
-                }))}
-                submitLabel="Save question"
-                onSubmit={(payload) => {
-                    onSave(payload);
-                    setEditing(false);
-                }}
-                onCancel={() => setEditing(false)}
-            />
-        </div>
+        <Disclosure as="div" className="card p-3">
+            {({ open, close }) =>
+                !open ? (
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="font-medium text-ink-900">{question.question_text}</p>
+                            <p className="text-xs text-slate-500">
+                                {formatSnakeCase(question.type)} · {question.points} pt(s)
+                            </p>
+                            <ul className="mt-1 list-inside list-disc text-xs text-slate-600">
+                                {question.answers.map((a, i) => (
+                                    <li key={a.id ?? i}>
+                                        {a.answer_text} {a.is_correct ? '✓' : ''}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="flex gap-2 text-xs">
+                            <DisclosureButton className="font-medium text-brand-600 hover:underline">
+                                Edit
+                            </DisclosureButton>
+                            <button type="button" onClick={onDelete} className="font-medium text-red-600 hover:underline">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <QuestionForm
+                        initialText={question.question_text}
+                        initialType={question.type}
+                        initialAnswers={question.answers.map((a) => ({
+                            id: a.id,
+                            answer_text: a.answer_text,
+                            is_correct: a.is_correct ?? false,
+                        }))}
+                        submitLabel="Save question"
+                        onSubmit={(payload) => {
+                            onSave(payload);
+                            close();
+                        }}
+                        onCancel={close}
+                    />
+                )
+            }
+        </Disclosure>
     );
 }
 
@@ -235,31 +228,27 @@ interface NewQuestionFormProps {
 }
 
 function NewQuestionForm({ onCreate }: NewQuestionFormProps) {
-    const [adding, setAdding] = useState(false);
-
-    if (!adding) {
-        return (
-            <button
-                type="button"
-                onClick={() => setAdding(true)}
-                className="text-xs font-medium text-brand-600 hover:underline"
-            >
-                + Add question
-            </button>
-        );
-    }
-
     return (
-        <div className="rounded-2xl border border-dashed border-slate-300 p-3">
-            <QuestionForm
-                submitLabel="Add question"
-                onSubmit={(payload) => {
-                    onCreate(payload);
-                    setAdding(false);
-                }}
-                onCancel={() => setAdding(false)}
-            />
-        </div>
+        <Disclosure>
+            {({ open, close }) =>
+                !open ? (
+                    <DisclosureButton className="text-xs font-medium text-brand-600 hover:underline">
+                        + Add question
+                    </DisclosureButton>
+                ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-300 p-3">
+                        <QuestionForm
+                            submitLabel="Add question"
+                            onSubmit={(payload) => {
+                                onCreate(payload);
+                                close();
+                            }}
+                            onCancel={close}
+                        />
+                    </div>
+                )
+            }
+        </Disclosure>
     );
 }
 
