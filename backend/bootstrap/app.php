@@ -35,6 +35,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            // Overrides the framework default so an already-authenticated
+            // hit on a guest-only route (login/register/demo-login) gets a
+            // clean JSON 409 instead of a redirect to a nonexistent named
+            // "login" route.
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
 
         // Stripe signs the webhook body itself; it can't submit a CSRF token.
