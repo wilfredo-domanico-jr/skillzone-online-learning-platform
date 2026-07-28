@@ -1,14 +1,45 @@
 import client, { ensureCsrfCookie } from './client';
 import type {
     Course,
+    CourseStatus,
     InstructorApplication,
+    InstructorApplicationStatus,
     InstructorPayout,
     PaginatedResponse,
+    PayoutStatus,
     User,
 } from '../types/api';
 
+export interface InstructorApplicationListParams {
+    status?: InstructorApplicationStatus;
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
+export interface CourseModerationListParams {
+    status?: CourseStatus;
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
+export interface AdminPayoutListParams {
+    status?: PayoutStatus;
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
+export interface AdminUserListParams {
+    search?: string;
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchInstructorApplications(
-    params: Record<string, unknown> = {}
+    params: InstructorApplicationListParams = {}
 ): Promise<PaginatedResponse<InstructorApplication>> {
     const { data } = await client.get('/api/v1/admin/instructor-applications', { params });
     return data;
@@ -32,7 +63,7 @@ export async function rejectInstructorApplication(
 }
 
 export async function fetchCoursesForModeration(
-    params: Record<string, unknown> = {}
+    params: CourseModerationListParams = {}
 ): Promise<PaginatedResponse<Course>> {
     const { data } = await client.get('/api/v1/admin/courses', { params });
     return data;
@@ -54,7 +85,7 @@ export async function rejectCourse(id: number, rejectionReason: string): Promise
 
 // Payouts
 export async function fetchAdminPayouts(
-    params: Record<string, unknown> = {}
+    params: AdminPayoutListParams = {}
 ): Promise<PaginatedResponse<InstructorPayout>> {
     const { data } = await client.get('/api/v1/admin/payouts', { params });
     return data;
@@ -68,7 +99,7 @@ export async function markPayoutPaid(id: number): Promise<InstructorPayout> {
 
 // Users
 export async function fetchAdminUsers(
-    params: Record<string, unknown> = {}
+    params: AdminUserListParams = {}
 ): Promise<PaginatedResponse<User>> {
     const { data } = await client.get('/api/v1/admin/users', { params });
     return data;

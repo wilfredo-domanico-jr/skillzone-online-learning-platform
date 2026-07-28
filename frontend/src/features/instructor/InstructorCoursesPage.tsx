@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { createCourse, fetchMyCourses } from '../../api/instructor';
 import type { CourseStatus } from '../../types/api';
 
@@ -61,7 +62,7 @@ export default function InstructorCoursesPage() {
                 </button>
             </form>
 
-            {isLoading && <p className="mt-6 text-slate-500">Loading…</p>}
+            {isLoading && <Loading className="mt-6" />}
 
             <div className="mt-6 space-y-3">
                 {data?.data.map((course) => (

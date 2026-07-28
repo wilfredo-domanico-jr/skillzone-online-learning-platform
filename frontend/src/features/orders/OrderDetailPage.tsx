@@ -1,6 +1,9 @@
 import { useQuery, useQueryClient, type Query } from '@tanstack/react-query';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { fetchOrder } from '../../api/commerce';
+import { ORDER_POLL_INTERVAL_MS } from '../../lib/constants';
+import { formatPrice } from '../../lib/formatPrice';
 import type { Order } from '../../types/api';
 
 export default function OrderDetailPage() {
@@ -14,10 +17,10 @@ export default function OrderDetailPage() {
         // The webhook may not have processed yet when the success redirect
         // lands — poll briefly until the order flips to paid.
         refetchInterval: (query: Query<Order, Error, Order>) =>
-            query.state.data?.status === 'pending' ? 2000 : false,
+            query.state.data?.status === 'pending' ? ORDER_POLL_INTERVAL_MS : false,
     });
 
-    if (isLoading) return <p className="text-slate-500">Loading…</p>;
+    if (isLoading) return <Loading />;
     if (!order) return <p className="text-slate-500">Order not found.</p>;
 
     return (
@@ -52,7 +55,7 @@ export default function OrderDetailPage() {
                         >
                             {item.course.title}
                         </Link>
-                        <span className="text-slate-600">${Number(item.price_at_purchase).toFixed(2)}</span>
+                        <span className="text-slate-600">{formatPrice(item.price_at_purchase)}</span>
                     </li>
                 ))}
             </ul>
@@ -60,17 +63,17 @@ export default function OrderDetailPage() {
             <div className="card mt-4 p-5 text-sm">
                 <div className="flex justify-between text-slate-600">
                     <span>Subtotal</span>
-                    <span>${Number(order.subtotal).toFixed(2)}</span>
+                    <span>{formatPrice(order.subtotal)}</span>
                 </div>
                 {Number(order.discount_total) > 0 && (
                     <div className="flex justify-between text-brand-700">
                         <span>Discount</span>
-                        <span>-${Number(order.discount_total).toFixed(2)}</span>
+                        <span>-{formatPrice(order.discount_total)}</span>
                     </div>
                 )}
                 <div className="mt-2 flex justify-between border-t border-slate-100 pt-2 font-semibold text-ink-900">
                     <span>Total</span>
-                    <span>${Number(order.total).toFixed(2)}</span>
+                    <span>{formatPrice(order.total)}</span>
                 </div>
             </div>
         </div>

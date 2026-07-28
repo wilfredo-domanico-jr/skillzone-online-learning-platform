@@ -1,8 +1,42 @@
 import client, { ensureCsrfCookie } from './client';
-import type { Course, CourseSection, InstructorApplication, InstructorPayout, Lesson, LessonAttachment, PaginatedResponse } from '../types/api';
+import type {
+    Course,
+    CourseLevel,
+    CourseSection,
+    InstructorApplication,
+    InstructorPayout,
+    Lesson,
+    LessonAttachment,
+    LessonType,
+    PaginatedResponse,
+} from '../types/api';
+
+export interface InstructorApplicationPayload {
+    bio: string;
+    portfolio_url?: string;
+    expertise?: string[];
+}
+
+export interface InstructorCourseListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
+export interface CourseFormPayload {
+    title: string;
+    category_id?: number | null;
+    subtitle?: string;
+    description?: string;
+    price?: number | string;
+    level?: CourseLevel;
+    language?: string;
+    requirements?: string[];
+    what_you_will_learn?: string[];
+}
 
 // Instructor application
-export async function applyToTeach(payload: Record<string, unknown>): Promise<InstructorApplication> {
+export async function applyToTeach(payload: InstructorApplicationPayload): Promise<InstructorApplication> {
     await ensureCsrfCookie();
     const { data } = await client.post('/api/v1/instructor-applications', payload);
     return data.data;
@@ -15,19 +49,19 @@ export async function fetchMyApplication(): Promise<InstructorApplication | null
 
 // Courses
 export async function fetchMyCourses(
-    params: Record<string, unknown> = {}
+    params: InstructorCourseListParams = {}
 ): Promise<PaginatedResponse<Course>> {
     const { data } = await client.get('/api/v1/instructor/courses', { params });
     return data;
 }
 
-export async function createCourse(payload: Record<string, unknown>): Promise<Course> {
+export async function createCourse(payload: CourseFormPayload): Promise<Course> {
     await ensureCsrfCookie();
     const { data } = await client.post('/api/v1/instructor/courses', payload);
     return data.data;
 }
 
-export async function updateCourse(courseId: number, payload: Record<string, unknown>): Promise<Course> {
+export async function updateCourse(courseId: number, payload: CourseFormPayload): Promise<Course> {
     await ensureCsrfCookie();
     const { data } = await client.put(`/api/v1/instructor/courses/${courseId}`, payload);
     return data.data;
@@ -71,13 +105,24 @@ export async function reorderSections(courseId: number, sectionIds: number[]): P
 }
 
 // Lessons
-export async function createLesson(sectionId: number, payload: Record<string, unknown>): Promise<Lesson> {
+export interface CreateLessonPayload {
+    title: string;
+    type: LessonType;
+    is_previewable?: boolean;
+}
+
+export interface UpdateLessonPayload {
+    title: string;
+    is_previewable?: boolean;
+}
+
+export async function createLesson(sectionId: number, payload: CreateLessonPayload): Promise<Lesson> {
     await ensureCsrfCookie();
     const { data } = await client.post(`/api/v1/instructor/sections/${sectionId}/lessons`, payload);
     return data.data;
 }
 
-export async function updateLesson(lessonId: number, payload: Record<string, unknown>): Promise<Lesson> {
+export async function updateLesson(lessonId: number, payload: UpdateLessonPayload): Promise<Lesson> {
     await ensureCsrfCookie();
     const { data } = await client.put(`/api/v1/instructor/lessons/${lessonId}`, payload);
     return data.data;
@@ -137,8 +182,14 @@ export async function fetchAnalyticsOverview(): Promise<AnalyticsOverview> {
     return data;
 }
 
+export interface InstructorPayoutListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchMyPayouts(
-    params: Record<string, unknown> = {}
+    params: InstructorPayoutListParams = {}
 ): Promise<PaginatedResponse<InstructorPayout>> {
     const { data } = await client.get('/api/v1/instructor/payouts', { params });
     return data;

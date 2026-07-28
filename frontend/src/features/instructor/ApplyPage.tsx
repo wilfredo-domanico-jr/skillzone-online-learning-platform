@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import FormError from '../../components/FormError';
-import { fieldErrors, generalError } from '../../lib/apiErrors';
+import Loading from '../../components/Loading';
+import { applyServerErrors } from '../../lib/apiErrors';
 import { applyToTeach, fetchMyApplication } from '../../api/instructor';
 import { AUTH_QUERY_KEY, useAuthUser } from '../auth/useAuth';
 
@@ -42,14 +43,7 @@ export default function ApplyPage() {
             });
             queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
         } catch (error) {
-            const fieldErrs = fieldErrors(error);
-            if (Object.keys(fieldErrs).length) {
-                Object.entries(fieldErrs).forEach(([field, message]) =>
-                    setError(field as keyof ApplyFormValues, { message })
-                );
-            } else {
-                setError('root', { message: generalError(error) });
-            }
+            applyServerErrors(error, setError);
         }
     };
 
@@ -57,7 +51,7 @@ export default function ApplyPage() {
         return <p className="text-slate-600">You're already an approved instructor.</p>;
     }
 
-    if (isLoading) return <p className="text-slate-500">Loading…</p>;
+    if (isLoading) return <Loading />;
 
     if (application && application.status === 'pending') {
         return (

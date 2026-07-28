@@ -1,8 +1,14 @@
 import client, { ensureCsrfCookie } from './client';
 import type { Course, Enrollment, PaginatedResponse } from '../types/api';
 
+export interface EnrollmentListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchMyEnrollments(
-    params: Record<string, unknown> = {}
+    params: EnrollmentListParams = {}
 ): Promise<PaginatedResponse<Enrollment>> {
     const { data } = await client.get('/api/v1/my/enrollments', { params });
     return data;

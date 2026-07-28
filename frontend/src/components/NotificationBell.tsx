@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchNotifications, markAllNotificationsRead, markNotificationRead } from '../api/notifications';
+import { NOTIFICATION_POLL_INTERVAL_MS } from '../lib/constants';
 
 export default function NotificationBell() {
     const [open, setOpen] = useState(false);
@@ -9,7 +10,7 @@ export default function NotificationBell() {
     const { data } = useQuery({
         queryKey: ['notifications'],
         queryFn: () => fetchNotifications({ per_page: 10 }),
-        refetchInterval: 30_000,
+        refetchInterval: NOTIFICATION_POLL_INTERVAL_MS,
     });
 
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['notifications'] });

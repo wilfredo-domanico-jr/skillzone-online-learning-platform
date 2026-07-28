@@ -1,8 +1,14 @@
 import client, { ensureCsrfCookie } from './client';
 import type { NotificationsResponse } from '../types/api';
 
+export interface NotificationListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchNotifications(
-    params: Record<string, unknown> = {}
+    params: NotificationListParams = {}
 ): Promise<NotificationsResponse> {
     const { data } = await client.get('/api/v1/notifications', { params });
     return data;

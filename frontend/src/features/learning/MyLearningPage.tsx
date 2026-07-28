@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { fetchMyEnrollments } from '../../api/learning';
 
 export default function MyLearningPage() {
@@ -19,7 +20,7 @@ export default function MyLearningPage() {
                 </div>
             </div>
 
-            {isLoading && <p className="mt-8 text-slate-500">Loading…</p>}
+            {isLoading && <Loading className="mt-8" />}
             {data && data.data.length === 0 && (
                 <p className="mt-8 text-slate-500">
                     You haven't enrolled in any courses yet.{' '}

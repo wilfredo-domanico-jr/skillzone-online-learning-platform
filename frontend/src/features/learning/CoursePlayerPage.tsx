@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { completeLesson, fetchLearnCurriculum, saveLessonProgress } from '../../api/learning';
 import type { LearnCurriculum } from '../../api/learning';
+import { VIDEO_PROGRESS_SAVE_INTERVAL_SECONDS } from '../../lib/constants';
 import QuizPlayer from './QuizPlayer';
 import type { Lesson } from '../../types/api';
 
@@ -32,7 +34,7 @@ export default function CoursePlayerPage() {
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['courses', slug, 'curriculum'] });
     const complete = useMutation({ mutationFn: completeLesson, onSuccess: invalidate });
 
-    if (isLoading) return <p className="text-slate-500">Loading…</p>;
+    if (isLoading) return <Loading />;
     if (!data?.enrollment) {
         return <Navigate to={`/courses/${slug}`} replace />;
     }
@@ -118,7 +120,7 @@ function LessonContent({ lesson, onComplete, isCompleting, onQuizPassed }: Lesso
 
     const handleTimeUpdate = (e: SyntheticEvent<HTMLVideoElement>) => {
         const t = e.currentTarget.currentTime;
-        if (t - lastSavedRef.current > 5) {
+        if (t - lastSavedRef.current > VIDEO_PROGRESS_SAVE_INTERVAL_SECONDS) {
             lastSavedRef.current = t;
             saveLessonProgress(lesson.id, t);
         }

@@ -1,5 +1,24 @@
 import client, { ensureCsrfCookie } from './client';
-import type { Quiz, QuizAttempt, QuizQuestion } from '../types/api';
+import type { Quiz, QuizAttempt, QuizQuestion, QuizQuestionType } from '../types/api';
+
+export interface QuizSettingsPayload {
+    passing_score_percent: number;
+    max_attempts: number | null;
+    time_limit_minutes: number | null;
+}
+
+export interface QuizQuestionAnswerPayload {
+    id?: number;
+    answer_text: string;
+    is_correct: boolean;
+}
+
+export interface QuizQuestionPayload {
+    question_text: string;
+    type: QuizQuestionType;
+    points?: number;
+    answers: QuizQuestionAnswerPayload[];
+}
 
 // Instructor quiz builder
 export async function fetchInstructorQuiz(lessonId: number): Promise<Quiz> {
@@ -7,19 +26,19 @@ export async function fetchInstructorQuiz(lessonId: number): Promise<Quiz> {
     return data.data;
 }
 
-export async function saveQuizSettings(lessonId: number, payload: Record<string, unknown>): Promise<Quiz> {
+export async function saveQuizSettings(lessonId: number, payload: QuizSettingsPayload): Promise<Quiz> {
     await ensureCsrfCookie();
     const { data } = await client.put(`/api/v1/instructor/lessons/${lessonId}/quiz`, payload);
     return data.data;
 }
 
-export async function createQuestion(quizId: number, payload: Record<string, unknown>): Promise<QuizQuestion> {
+export async function createQuestion(quizId: number, payload: QuizQuestionPayload): Promise<QuizQuestion> {
     await ensureCsrfCookie();
     const { data } = await client.post(`/api/v1/instructor/quizzes/${quizId}/questions`, payload);
     return data.data;
 }
 
-export async function updateQuestion(questionId: number, payload: Record<string, unknown>): Promise<QuizQuestion> {
+export async function updateQuestion(questionId: number, payload: QuizQuestionPayload): Promise<QuizQuestion> {
     await ensureCsrfCookie();
     const { data } = await client.put(`/api/v1/instructor/questions/${questionId}`, payload);
     return data.data;

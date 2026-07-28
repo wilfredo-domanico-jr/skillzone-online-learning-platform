@@ -1,12 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import Loading from '../../components/Loading';
 import { fetchAnalyticsOverview, fetchMyPayouts } from '../../api/instructor';
-import type { PayoutStatus } from '../../types/api';
-
-const PAYOUT_STATUS_STYLES: Record<PayoutStatus, string> = {
-    pending: 'badge-amber',
-    processing: 'badge bg-sky-100 text-sky-700',
-    paid: 'badge-brand',
-};
+import { formatPrice } from '../../lib/formatPrice';
+import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
 
 export default function InstructorDashboardPage() {
     const { data: overview, isLoading: overviewLoading } = useQuery({
@@ -32,7 +28,7 @@ export default function InstructorDashboardPage() {
                 </div>
             </div>
 
-            {overviewLoading && <p className="mt-6 text-slate-500">Loading…</p>}
+            {overviewLoading && <Loading className="mt-6" />}
 
             {overview && (
                 <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -51,7 +47,7 @@ export default function InstructorDashboardPage() {
                     <div className="card p-6">
                         <p className="eyebrow">Total revenue</p>
                         <p className="mt-2 font-display text-3xl font-bold text-ink-900">
-                            ${Number(overview.total_revenue).toFixed(2)}
+                            {formatPrice(overview.total_revenue)}
                         </p>
                     </div>
                     <div className="card p-6">
@@ -65,7 +61,7 @@ export default function InstructorDashboardPage() {
 
             <h2 className="mt-10 mb-3 font-display text-lg font-semibold text-ink-900">Payouts</h2>
 
-            {payoutsLoading && <p className="text-slate-500">Loading…</p>}
+            {payoutsLoading && <Loading />}
             {payouts && payouts.data.length === 0 && (
                 <p className="text-sm text-slate-500">No payouts yet — they're generated monthly from paid enrollments.</p>
             )}
@@ -78,12 +74,12 @@ export default function InstructorDashboardPage() {
                                 {payout.period_start} – {payout.period_end}
                             </p>
                             <p className="text-xs text-slate-500">
-                                Gross ${Number(payout.gross_amount).toFixed(2)} · Fee ${Number(payout.platform_fee_amount).toFixed(2)}
+                                Gross {formatPrice(payout.gross_amount)} · Fee {formatPrice(payout.platform_fee_amount)}
                             </p>
                         </div>
                         <div className="text-right">
                             <p className="font-display text-sm font-semibold text-ink-900">
-                                ${Number(payout.net_amount).toFixed(2)}
+                                {formatPrice(payout.net_amount)}
                             </p>
                             <span className={PAYOUT_STATUS_STYLES[payout.status]}>{payout.status}</span>
                         </div>

@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { fetchOrders } from '../../api/commerce';
+import { formatPrice } from '../../lib/formatPrice';
 import type { OrderStatus } from '../../types/api';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
@@ -17,7 +19,7 @@ export default function OrdersPage() {
         <div>
             <h1 className="mb-6 font-display text-2xl font-semibold text-ink-900">Order History</h1>
 
-            {isLoading && <p className="text-slate-500">Loading…</p>}
+            {isLoading && <Loading />}
             {data && data.data.length === 0 && <p className="text-slate-500">No orders yet.</p>}
 
             <ul className="space-y-3">
@@ -34,7 +36,7 @@ export default function OrdersPage() {
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-sm text-slate-600">${Number(order.total).toFixed(2)}</span>
+                                <span className="text-sm text-slate-600">{formatPrice(order.total)}</span>
                                 <span className={STATUS_STYLES[order.status]}>{order.status}</span>
                             </div>
                         </Link>

@@ -1,6 +1,12 @@
 import client, { ensureCsrfCookie } from './client';
 import type { Cart, Order, PaginatedResponse } from '../types/api';
 
+export interface OrderListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchCart(): Promise<Cart> {
     const { data } = await client.get('/api/v1/cart');
     return data.data;
@@ -45,7 +51,7 @@ export async function startCheckout(couponCode?: string): Promise<CheckoutSessio
 }
 
 export async function fetchOrders(
-    params: Record<string, unknown> = {}
+    params: OrderListParams = {}
 ): Promise<PaginatedResponse<Order>> {
     const { data } = await client.get('/api/v1/orders', { params });
     return data;

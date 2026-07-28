@@ -2,7 +2,9 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { fetchCategories, fetchCourses } from '../../api/catalog';
+import { formatPrice } from '../../lib/formatPrice';
 import useDocumentMeta from '../../lib/useDocumentMeta';
 
 const GRADIENTS = [
@@ -99,7 +101,7 @@ export default function CourseListPage() {
                 </select>
             </div>
 
-            {isLoading && <p className="mt-8 text-slate-500">Loading courses…</p>}
+            {isLoading && <Loading label="Loading courses…" className="mt-8" />}
 
             {data && data.data.length === 0 && <p className="mt-8 text-slate-500">No courses found.</p>}
 
@@ -132,7 +134,7 @@ export default function CourseListPage() {
                             <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm">
                                 <span className="text-slate-500">{course.instructor?.name}</span>
                                 {Number(course.price) > 0 ? (
-                                    <span className="font-semibold text-ink-900">${Number(course.price).toFixed(2)}</span>
+                                    <span className="font-semibold text-ink-900">{formatPrice(course.price)}</span>
                                 ) : (
                                     <span className="badge-brand">Free</span>
                                 )}

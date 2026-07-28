@@ -8,7 +8,9 @@ import {
     validateCoupon,
     type CouponValidationResponse,
 } from '../../api/commerce';
+import Loading from '../../components/Loading';
 import { generalError } from '../../lib/apiErrors';
+import { formatPrice } from '../../lib/formatPrice';
 
 export default function CartPage() {
     const [searchParams] = useSearchParams();
@@ -35,7 +37,7 @@ export default function CartPage() {
         },
     });
 
-    if (isLoading) return <p className="text-slate-500">Loading…</p>;
+    if (isLoading) return <Loading />;
 
     const isEmpty = !cart || cart.items.length === 0;
 
@@ -64,7 +66,7 @@ export default function CartPage() {
                             <li key={item.id} className="flex items-center justify-between px-5 py-4">
                                 <span className="text-ink-900">{item.course.title}</span>
                                 <div className="flex items-center gap-4">
-                                    <span className="text-slate-600">${Number(item.course.price).toFixed(2)}</span>
+                                    <span className="text-slate-600">{formatPrice(item.course.price)}</span>
                                     <button
                                         type="button"
                                         onClick={() => remove.mutate(item.course.id)}
@@ -101,17 +103,17 @@ export default function CartPage() {
                     <div className="card mt-6 p-5">
                         <div className="flex justify-between text-sm text-slate-600">
                             <span>Subtotal</span>
-                            <span>${Number(couponPreview?.subtotal ?? cart.subtotal).toFixed(2)}</span>
+                            <span>{formatPrice(couponPreview?.subtotal ?? cart.subtotal)}</span>
                         </div>
                         {couponPreview && (
                             <div className="flex justify-between text-sm text-brand-700">
                                 <span>Discount ({couponPreview.code})</span>
-                                <span>-${couponPreview.discount.toFixed(2)}</span>
+                                <span>-{formatPrice(couponPreview.discount)}</span>
                             </div>
                         )}
                         <div className="mt-2 flex justify-between border-t border-slate-100 pt-2 font-semibold text-ink-900">
                             <span>Total</span>
-                            <span>${Number(couponPreview?.total ?? cart.subtotal).toFixed(2)}</span>
+                            <span>{formatPrice(couponPreview?.total ?? cart.subtotal)}</span>
                         </div>
                     </div>
 

@@ -8,7 +8,9 @@ import { addToCart, fetchCart } from '../../api/commerce';
 import { createReview, deleteReview, fetchReviews, updateReview } from '../../api/reviews';
 import type { ReviewPayload } from '../../api/reviews';
 import { useAuthUser } from '../auth/useAuth';
+import Loading from '../../components/Loading';
 import { generalError } from '../../lib/apiErrors';
+import { formatPrice } from '../../lib/formatPrice';
 import useDocumentMeta from '../../lib/useDocumentMeta';
 import type { Cart, Review } from '../../types/api';
 
@@ -18,32 +20,35 @@ interface SubmitReviewVariables {
 }
 
 export default function CourseDetailPage() {
-    const { slug } = useParams<{ slug: string }>();
+    // The route is only ever matched as /courses/:slug, so this param is
+    // always present — asserted once here instead of at each call site.
+    const { slug: routeSlug } = useParams<{ slug: string }>();
+    const slug = routeSlug as string;
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data: user } = useAuthUser();
 
     const { data: course, isLoading } = useQuery({
         queryKey: ['courses', slug],
-        queryFn: () => fetchCourse(slug!),
+        queryFn: () => fetchCourse(slug),
     });
 
     useDocumentMeta(course?.title, course?.subtitle);
 
     const { data: learn } = useQuery({
         queryKey: ['courses', slug, 'curriculum'],
-        queryFn: () => fetchLearnCurriculum(slug!),
+        queryFn: () => fetchLearnCurriculum(slug),
         enabled: !!course,
     });
 
     const { data: reviews } = useQuery({
         queryKey: ['courses', slug, 'reviews'],
-        queryFn: () => fetchReviews(slug!),
+        queryFn: () => fetchReviews(slug),
         enabled: !!course,
     });
 
     const enroll = useMutation({
-        mutationFn: () => enrollInCourse(slug!),
+        mutationFn: () => enrollInCourse(slug),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['courses', slug, 'curriculum'] });
             navigate(`/learn/${slug}`);
@@ -74,11 +79,9 @@ export default function CourseDetailPage() {
         onSuccess: invalidateReviews,
     });
 
-    const [rating, setRating] = useState(5);
-    const [comment, setComment] = useState('');
     const [editingReview, setEditingReview] = useState<Review | null>(null);
 
-    if (isLoading) return <p className="text-slate-500">Loading…</p>;
+    if (isLoading) return <Loading />;
     if (!course) return <p className="text-slate-500">Course not found.</p>;
 
     const curriculum = learn?.course;
@@ -86,12 +89,6 @@ export default function CourseDetailPage() {
     const isFree = Number(course.price) <= 0;
     const isInCart = cart?.items.some((item) => item.course.id === course.id);
     const myReview = reviews?.data.find((r) => r.user?.id === user?.id);
-
-    const startEditing = (review: Review) => {
-        setEditingReview(review);
-        setRating(review.rating);
-        setComment(review.comment ?? '');
-    };
 
     return (
         <div>
@@ -165,80 +162,32 @@ export default function CourseDetailPage() {
                     <h2 className="mt-8 mb-3 font-display text-lg font-semibold text-ink-900">Reviews</h2>
 
                     {enrollment && !myReview && !editingReview && (
-                        <form
-                            onSubmit={(e: FormEvent) => {
-                                e.preventDefault();
-                                submitReview.mutate({ payload: { rating: Number(rating), comment } });
-                                setComment('');
-                            }}
-                            className="card mb-4 p-5"
-                        >
-                            <label className="label">Your rating</label>
-                            <select
-                                value={rating}
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) => setRating(Number(e.target.value))}
-                                className="input w-auto"
-                            >
-                                {[5, 4, 3, 2, 1].map((n) => (
-                                    <option key={n} value={n}>
-                                        {n} star{n === 1 ? '' : 's'}
-                                    </option>
-                                ))}
-                            </select>
-                            <textarea
-                                value={comment}
-                                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
-                                placeholder="Share your thoughts (optional)…"
-                                rows={3}
-                                className="input mt-3"
-                            />
-                            <button type="submit" disabled={submitReview.isPending} className="btn-primary mt-3">
-                                Submit review
-                            </button>
-                            {submitReview.isError && (
-                                <p className="mt-2 text-sm text-red-600">{generalError(submitReview.error)}</p>
-                            )}
-                        </form>
+                        <ReviewForm
+                            heading="Your rating"
+                            submitLabel="Submit review"
+                            isPending={submitReview.isPending}
+                            error={submitReview.isError ? submitReview.error : undefined}
+                            onSubmit={(payload) => submitReview.mutate({ payload })}
+                        />
                     )}
 
                     {editingReview && (
-                        <form
-                            onSubmit={(e: FormEvent) => {
-                                e.preventDefault();
+                        <ReviewForm
+                            key={editingReview.id}
+                            heading="Edit your rating"
+                            submitLabel="Save changes"
+                            initialRating={editingReview.rating}
+                            initialComment={editingReview.comment ?? ''}
+                            isPending={submitReview.isPending}
+                            error={submitReview.isError ? submitReview.error : undefined}
+                            onCancel={() => setEditingReview(null)}
+                            onSubmit={(payload) =>
                                 submitReview.mutate(
-                                    { id: editingReview.id, payload: { rating: Number(rating), comment } },
+                                    { id: editingReview.id, payload },
                                     { onSuccess: () => setEditingReview(null) }
-                                );
-                            }}
-                            className="card mb-4 p-5"
-                        >
-                            <label className="label">Edit your rating</label>
-                            <select
-                                value={rating}
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) => setRating(Number(e.target.value))}
-                                className="input w-auto"
-                            >
-                                {[5, 4, 3, 2, 1].map((n) => (
-                                    <option key={n} value={n}>
-                                        {n} star{n === 1 ? '' : 's'}
-                                    </option>
-                                ))}
-                            </select>
-                            <textarea
-                                value={comment}
-                                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
-                                rows={3}
-                                className="input mt-3"
-                            />
-                            <div className="mt-3 flex gap-2">
-                                <button type="submit" disabled={submitReview.isPending} className="btn-primary">
-                                    Save changes
-                                </button>
-                                <button type="button" onClick={() => setEditingReview(null)} className="btn-outline">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
+                                )
+                            }
+                        />
                     )}
 
                     <div className="space-y-3">
@@ -253,7 +202,7 @@ export default function CourseDetailPage() {
                                         <div className="flex gap-3 text-xs">
                                             <button
                                                 type="button"
-                                                onClick={() => startEditing(review)}
+                                                onClick={() => setEditingReview(review)}
                                                 className="font-medium text-slate-500 hover:text-ink-900"
                                             >
                                                 Edit
@@ -281,7 +230,7 @@ export default function CourseDetailPage() {
                         </span>
                     </div>
                     <p className="font-display text-3xl font-bold text-ink-900">
-                        {isFree ? 'Free' : `$${Number(course.price).toFixed(2)}`}
+                        {isFree ? 'Free' : formatPrice(course.price)}
                     </p>
 
                     {enrollment ? (
@@ -322,5 +271,71 @@ export default function CourseDetailPage() {
                 </aside>
             </div>
         </div>
+    );
+}
+
+interface ReviewFormProps {
+    heading: string;
+    submitLabel: string;
+    initialRating?: number;
+    initialComment?: string;
+    isPending: boolean;
+    error?: unknown;
+    onSubmit: (payload: ReviewPayload) => void;
+    onCancel?: () => void;
+}
+
+function ReviewForm({
+    heading,
+    submitLabel,
+    initialRating = 5,
+    initialComment = '',
+    isPending,
+    error,
+    onSubmit,
+    onCancel,
+}: ReviewFormProps) {
+    const [rating, setRating] = useState(initialRating);
+    const [comment, setComment] = useState(initialComment);
+
+    return (
+        <form
+            onSubmit={(e: FormEvent) => {
+                e.preventDefault();
+                onSubmit({ rating, comment });
+            }}
+            className="card mb-4 p-5"
+        >
+            <label className="label">{heading}</label>
+            <select
+                value={rating}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => setRating(Number(e.target.value))}
+                className="input w-auto"
+            >
+                {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                        {n} star{n === 1 ? '' : 's'}
+                    </option>
+                ))}
+            </select>
+            <textarea
+                value={comment}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
+                placeholder="Share your thoughts (optional)…"
+                rows={3}
+                className="input mt-3"
+            />
+            <div className="mt-3 flex gap-2">
+                <button type="submit" disabled={isPending} className="btn-primary">
+                    {submitLabel}
+                </button>
+                {onCancel && (
+                    <button type="button" onClick={onCancel} className="btn-outline">
+                        Cancel
+                    </button>
+                )}
+            </div>
+            {error !== undefined && <p className="mt-2 text-sm text-red-600">{generalError(error)}</p>}
+        </form>
     );
 }

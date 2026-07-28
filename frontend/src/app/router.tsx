@@ -1,4 +1,6 @@
+import type { ComponentType } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 import GuestLayout from './layouts/GuestLayout';
 import AppLayout from './layouts/AppLayout';
 import RequireAuth from './RequireAuth';
@@ -23,6 +25,18 @@ import CoursePlayerPage from '../features/learning/CoursePlayerPage';
 import CartPage from '../features/cart/CartPage';
 import OrdersPage from '../features/orders/OrdersPage';
 import OrderDetailPage from '../features/orders/OrderDetailPage';
+import type { Role } from '../types/api';
+
+function protectedRoute(path: string, Component: ComponentType, roles?: Role[]): RouteObject {
+    return {
+        path,
+        element: (
+            <RequireAuth roles={roles}>
+                <Component />
+            </RequireAuth>
+        ),
+    };
+}
 
 export const router = createBrowserRouter([
     {
@@ -39,118 +53,20 @@ export const router = createBrowserRouter([
         children: [
             { path: '/courses', element: <CourseListPage /> },
             { path: '/courses/:slug', element: <CourseDetailPage /> },
-            {
-                path: '/dashboard',
-                element: (
-                    <RequireAuth>
-                        <DashboardPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/my-learning',
-                element: (
-                    <RequireAuth>
-                        <MyLearningPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/learn/:slug',
-                element: (
-                    <RequireAuth>
-                        <CoursePlayerPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/cart',
-                element: (
-                    <RequireAuth>
-                        <CartPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/orders',
-                element: (
-                    <RequireAuth>
-                        <OrdersPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/orders/:orderId',
-                element: (
-                    <RequireAuth>
-                        <OrderDetailPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/instructor/apply',
-                element: (
-                    <RequireAuth>
-                        <ApplyPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/instructor/courses',
-                element: (
-                    <RequireAuth roles={['instructor']}>
-                        <InstructorCoursesPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/instructor/courses/:courseId',
-                element: (
-                    <RequireAuth roles={['instructor']}>
-                        <CourseEditorPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/instructor/dashboard',
-                element: (
-                    <RequireAuth roles={['instructor']}>
-                        <InstructorDashboardPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/admin/instructor-applications',
-                element: (
-                    <RequireAuth roles={['admin']}>
-                        <ApplicationsQueuePage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/admin/courses',
-                element: (
-                    <RequireAuth roles={['admin']}>
-                        <CourseModerationPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/admin/payouts',
-                element: (
-                    <RequireAuth roles={['admin']}>
-                        <AdminPayoutsPage />
-                    </RequireAuth>
-                ),
-            },
-            {
-                path: '/admin/users',
-                element: (
-                    <RequireAuth roles={['admin']}>
-                        <AdminUsersPage />
-                    </RequireAuth>
-                ),
-            },
+            protectedRoute('/dashboard', DashboardPage),
+            protectedRoute('/my-learning', MyLearningPage),
+            protectedRoute('/learn/:slug', CoursePlayerPage),
+            protectedRoute('/cart', CartPage),
+            protectedRoute('/orders', OrdersPage),
+            protectedRoute('/orders/:orderId', OrderDetailPage),
+            protectedRoute('/instructor/apply', ApplyPage),
+            protectedRoute('/instructor/courses', InstructorCoursesPage, ['instructor']),
+            protectedRoute('/instructor/courses/:courseId', CourseEditorPage, ['instructor']),
+            protectedRoute('/instructor/dashboard', InstructorDashboardPage, ['instructor']),
+            protectedRoute('/admin/instructor-applications', ApplicationsQueuePage, ['admin']),
+            protectedRoute('/admin/courses', CourseModerationPage, ['admin']),
+            protectedRoute('/admin/payouts', AdminPayoutsPage, ['admin']),
+            protectedRoute('/admin/users', AdminUsersPage, ['admin']),
         ],
     },
     { path: '/', element: <Navigate to="/courses" replace /> },

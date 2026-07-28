@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { fetchCourseCurriculum } from '../../api/catalog';
 import {
     createLesson,
@@ -15,8 +16,10 @@ import {
     updateLessonArticle,
     uploadLessonVideo,
 } from '../../api/instructor';
+import type { CreateLessonPayload } from '../../api/instructor';
 import { fetchMyCourses } from '../../api/instructor';
 import { generalError } from '../../lib/apiErrors';
+import { swapPosition } from '../../lib/reorder';
 import type { CourseSection, Lesson, LessonType } from '../../types/api';
 import QuizBuilder from './QuizBuilder';
 
@@ -71,7 +74,7 @@ export default function CourseEditorPage() {
     };
 
     const saveDetails = useMutation({
-        mutationFn: () => updateCourse(numericCourseId, details as unknown as Record<string, unknown>),
+        mutationFn: () => updateCourse(numericCourseId, details!),
         onSuccess: invalidate,
     });
 
@@ -85,7 +88,7 @@ export default function CourseEditorPage() {
         onSuccess: invalidate,
     });
 
-    if (!course || !details) return <p className="text-slate-500">Loading…</p>;
+    if (!course || !details) return <Loading />;
 
     return (
         <div className="max-w-3xl">
@@ -226,17 +229,13 @@ function SectionEditor({ section, isFirst, isLast, allSectionIds, courseId, onCh
         onSuccess: onChange,
     });
     const addLesson = useMutation({
-        mutationFn: (payload: Record<string, unknown>) => createLesson(section.id, payload),
+        mutationFn: (payload: CreateLessonPayload) => createLesson(section.id, payload),
         onSuccess: onChange,
     });
 
     const moveSection = (direction: number) => {
-        const index = allSectionIds.indexOf(section.id);
-        const swapWith = index + direction;
-        if (swapWith < 0 || swapWith >= allSectionIds.length) return;
-        const ids = [...allSectionIds];
-        [ids[index], ids[swapWith]] = [ids[swapWith], ids[index]];
-        move.mutate(ids);
+        const ids = swapPosition(allSectionIds, section.id, direction);
+        if (ids) move.mutate(ids);
     };
 
     return (
@@ -347,12 +346,8 @@ function LessonEditor({ lesson, isFirst, isLast, allLessonIds, sectionId, onChan
     });
 
     const moveLesson = (direction: number) => {
-        const index = allLessonIds.indexOf(lesson.id);
-        const swapWith = index + direction;
-        if (swapWith < 0 || swapWith >= allLessonIds.length) return;
-        const ids = [...allLessonIds];
-        [ids[index], ids[swapWith]] = [ids[swapWith], ids[index]];
-        move.mutate(ids);
+        const ids = swapPosition(allLessonIds, lesson.id, direction);
+        if (ids) move.mutate(ids);
     };
 
     return (

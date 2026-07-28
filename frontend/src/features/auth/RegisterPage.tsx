@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import FormError from '../../components/FormError';
-import { fieldErrors, generalError } from '../../lib/apiErrors';
+import { applyServerErrors } from '../../lib/apiErrors';
 import { useRegister } from './useAuth';
 
 interface RegisterFormValues {
@@ -26,14 +26,7 @@ export default function RegisterPage() {
             await registerUser.mutateAsync(values);
             navigate('/dashboard', { replace: true });
         } catch (error: unknown) {
-            const fieldErrs = fieldErrors(error);
-            if (Object.keys(fieldErrs).length) {
-                Object.entries(fieldErrs).forEach(([field, message]) =>
-                    setError(field as keyof RegisterFormValues, { message })
-                );
-            } else {
-                setError('root', { message: generalError(error) });
-            }
+            applyServerErrors(error, setError);
         }
     };
 

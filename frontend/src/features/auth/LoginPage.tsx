@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import FormError from '../../components/FormError';
-import { fieldErrors, generalError } from '../../lib/apiErrors';
+import { applyServerErrors, generalError } from '../../lib/apiErrors';
 import { socialRedirectUrl } from '../../api/auth';
 import { useDemoLogin, useLogin } from './useAuth';
 import type { Role } from '../../types/api';
@@ -36,14 +36,7 @@ export default function LoginPage() {
             await login.mutateAsync(values);
             navigate(locationState?.from?.pathname ?? '/dashboard', { replace: true });
         } catch (error: unknown) {
-            const fieldErrs = fieldErrors(error);
-            if (Object.keys(fieldErrs).length) {
-                Object.entries(fieldErrs).forEach(([field, message]) =>
-                    setError(field as keyof LoginFormValues, { message })
-                );
-            } else {
-                setError('root', { message: generalError(error) });
-            }
+            applyServerErrors(error, setError);
         }
     };
 

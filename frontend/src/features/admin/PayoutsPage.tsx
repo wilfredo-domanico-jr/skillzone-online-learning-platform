@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Loading from '../../components/Loading';
 import { fetchAdminPayouts, markPayoutPaid } from '../../api/admin';
 import { generalError } from '../../lib/apiErrors';
+import { formatPrice } from '../../lib/formatPrice';
+import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
 import type { PayoutStatus } from '../../types/api';
-
-const STATUS_STYLES: Record<PayoutStatus, string> = {
-    pending: 'badge-amber',
-    processing: 'badge bg-sky-100 text-sky-700',
-    paid: 'badge-brand',
-};
 
 export default function PayoutsPage() {
     const [status, setStatus] = useState<PayoutStatus | ''>('pending');
@@ -41,7 +38,7 @@ export default function PayoutsPage() {
                 <option value="">All</option>
             </select>
 
-            {isLoading && <p className="text-slate-500">Loading…</p>}
+            {isLoading && <Loading />}
             {markPaid.isError && <p className="mb-2 text-sm text-red-600">{generalError(markPaid.error)}</p>}
 
             <div className="card divide-y divide-slate-100">
@@ -50,11 +47,11 @@ export default function PayoutsPage() {
                         <div>
                             <p className="text-sm font-medium text-ink-900">{payout.instructor?.name}</p>
                             <p className="text-xs text-slate-500">
-                                {payout.period_start} – {payout.period_end} · Net ${Number(payout.net_amount).toFixed(2)}
+                                {payout.period_start} – {payout.period_end} · Net {formatPrice(payout.net_amount)}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className={STATUS_STYLES[payout.status]}>{payout.status}</span>
+                            <span className={PAYOUT_STATUS_STYLES[payout.status]}>{payout.status}</span>
                             {payout.status !== 'paid' && (
                                 <button
                                     type="button"

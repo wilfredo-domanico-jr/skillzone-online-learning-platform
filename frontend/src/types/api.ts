@@ -1,6 +1,6 @@
 export type Role = 'student' | 'instructor' | 'admin';
 
-export interface Role_ {
+export interface UserRole {
     id: number;
     name: Role;
 }
@@ -11,7 +11,7 @@ export interface User {
     email: string;
     email_verified_at: string | null;
     suspended_at?: string | null;
-    roles?: Role_[];
+    roles?: UserRole[];
 }
 
 export interface Category {

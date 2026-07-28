@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Loading from '../../components/Loading';
 import { fetchAdminUsers, suspendUser, unsuspendUser } from '../../api/admin';
 import { useAuthUser } from '../auth/useAuth';
 import { generalError } from '../../lib/apiErrors';
@@ -32,7 +33,7 @@ export default function UsersPage() {
                 className="input mt-6 mb-4 max-w-sm"
             />
 
-            {isLoading && <p className="text-slate-500">Loading…</p>}
+            {isLoading && <Loading />}
             {suspend.isError && <p className="mb-2 text-sm text-red-600">{generalError(suspend.error)}</p>}
 
             <div className="card divide-y divide-slate-100">

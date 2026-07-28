@@ -6,9 +6,15 @@ export interface ReviewPayload {
     comment?: string;
 }
 
+export interface ReviewListParams {
+    page?: number;
+    per_page?: number;
+    [key: string]: unknown;
+}
+
 export async function fetchReviews(
     slug: string,
-    params: Record<string, unknown> = {}
+    params: ReviewListParams = {}
 ): Promise<PaginatedResponse<Review>> {
     const { data } = await client.get(`/api/v1/courses/${slug}/reviews`, { params });
     return data;
