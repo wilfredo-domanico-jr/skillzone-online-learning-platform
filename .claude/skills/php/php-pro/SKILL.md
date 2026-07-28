@@ -1,25 +1,27 @@
 ---
 name: php-pro
-description: Use when building PHP applications with modern PHP 8.3+ features, Laravel, or Symfony frameworks. Invokes strict typing, PHPStan level 9, async patterns with Swoole, and PSR standards. Creates controllers, configures middleware, generates migrations, writes PHPUnit/Pest tests, defines typed DTOs and value objects, sets up dependency injection, and scaffolds REST/GraphQL APIs. Use when working with Eloquent, Doctrine, Composer, Psalm, ReactPHP, or any PHP API development.
+description: Use when writing modern PHP 8.3+ code — strict typing, readonly classes/properties, enums, attributes, first-class callables, match expressions, and PHPStan/Pest/PHPUnit quality tooling. For Laravel-specific architecture, routing, Eloquent, and security, prefer the laravel-specialist/laravel-patterns/laravel-security skills — this one is the PHP-language layer underneath them.
 license: MIT
 metadata:
   author: https://github.com/Jeffallan
   version: "1.1.0"
   domain: language
-  triggers: PHP, Laravel, Symfony, Composer, PHPStan, PSR, PHP API, Eloquent, Doctrine
+  triggers: PHP, PHPStan, PSR, modern PHP, readonly, enums, attributes
   role: specialist
   scope: implementation
   output-format: code
-  related-skills: fullstack-guardian, fastapi-expert
+  related-skills: laravel-specialist, laravel-patterns, laravel-security
 ---
 
 # PHP Pro
 
-Senior PHP developer with deep expertise in PHP 8.3+, Laravel, Symfony, and modern PHP patterns with strict typing and enterprise architecture.
+Senior PHP developer with deep expertise in PHP 8.3+ language features and strict-typed, PSR-compliant code quality.
+
+Note: this project (`OnlineLearningPlatform`) is Laravel-only — no Symfony, no Swoole/ReactPHP/async runtimes. Use `laravel-specialist`, `laravel-patterns`, and `laravel-security` for framework-level guidance; this skill covers the PHP language layer (syntax, typing, static analysis, testing tooling) underneath them.
 
 ## Core Workflow
 
-1. **Analyze architecture** — Review framework, PHP version, dependencies, and patterns
+1. **Analyze architecture** — Review PHP version, dependencies, and existing patterns
 2. **Design models** — Create typed domain models, value objects, DTOs
 3. **Implement** — Write strict-typed code with PSR compliance, DI, repositories
 4. **Secure** — Add validation, authentication, XSS/SQL injection protection
@@ -32,10 +34,7 @@ Load detailed guidance based on context:
 | Topic | Reference | Load When |
 |-------|-----------|-----------|
 | Modern PHP | `references/modern-php-features.md` | Readonly, enums, attributes, fibers, types |
-| Laravel | `references/laravel-patterns.md` | Services, repositories, resources, jobs |
-| Symfony | `references/symfony-patterns.md` | DI, events, commands, voters |
-| Async PHP | `references/async-patterns.md` | Swoole, ReactPHP, fibers, streams |
-| Testing | `references/testing-quality.md` | PHPUnit, PHPStan, Pest, mocking |
+| PHP testing/quality tooling | `references/testing-quality.md` | PHPStan config/annotations, Mockery, data providers, coverage — for Laravel feature/Pest test examples, use `laravel-specialist`'s testing reference instead |
 
 ## Constraints
 
@@ -203,6 +202,6 @@ When implementing a feature, deliver in this order:
 
 ## Knowledge Reference
 
-PHP 8.3+, Laravel 11, Symfony 7, Composer, PHPStan, Psalm, PHPUnit, Pest, Eloquent ORM, Doctrine, PSR standards, Swoole, ReactPHP, Redis, MySQL/PostgreSQL, REST/GraphQL APIs
+PHP 8.3+, Composer, PHPStan, Psalm, PHPUnit, Pest, PSR standards
 
 [Documentation](https://jeffallan.github.io/claude-skills/skills/language/php-pro/)
