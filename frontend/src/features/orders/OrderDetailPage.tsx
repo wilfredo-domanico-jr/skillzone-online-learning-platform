@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, type Query } from '@tanstack/react-query';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { fetchOrder } from '../../api/commerce';
 import { ORDER_POLL_INTERVAL_MS } from '../../lib/constants';
 import { formatPrice } from '../../lib/formatPrice';
@@ -20,7 +20,25 @@ export default function OrderDetailPage() {
             query.state.data?.status === 'pending' ? ORDER_POLL_INTERVAL_MS : false,
     });
 
-    if (isLoading) return <Loading />;
+    if (isLoading) {
+        return (
+            <div className="max-w-xl space-y-4">
+                <Skeleton className="h-7 w-40" />
+                <div className="card divide-y divide-slate-100">
+                    {Array.from({ length: 2 }, (_, i) => (
+                        <div key={i} className="flex items-center justify-between px-5 py-4">
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-4 w-16" />
+                        </div>
+                    ))}
+                </div>
+                <div className="card space-y-2 p-5">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+            </div>
+        );
+    }
     if (!order) return <p className="text-slate-500">Order not found.</p>;
 
     return (

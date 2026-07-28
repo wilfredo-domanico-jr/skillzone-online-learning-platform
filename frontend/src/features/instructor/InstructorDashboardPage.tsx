@@ -1,18 +1,23 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import Skeleton from '../../components/Skeleton';
+import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAnalyticsOverview, fetchMyPayouts } from '../../api/instructor';
 import { formatPrice } from '../../lib/formatPrice';
 import { PAYOUT_STATUS_STYLES } from '../../lib/payoutStatusStyles';
 
 export default function InstructorDashboardPage() {
+    const [page, setPage] = useState(1);
+
     const { data: overview, isLoading: overviewLoading } = useQuery({
         queryKey: ['instructor', 'analytics', 'overview'],
         queryFn: () => fetchAnalyticsOverview(),
     });
 
     const { data: payouts, isLoading: payoutsLoading } = useQuery({
-        queryKey: ['instructor', 'payouts'],
-        queryFn: () => fetchMyPayouts(),
+        queryKey: ['instructor', 'payouts', page],
+        queryFn: () => fetchMyPayouts({ page }),
     });
 
     return (
@@ -28,45 +33,52 @@ export default function InstructorDashboardPage() {
                 </div>
             </div>
 
-            {overviewLoading && <Loading className="mt-6" />}
-
-            {overview && (
-                <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                    <div className="card p-6">
-                        <p className="eyebrow">Published courses</p>
-                        <p className="mt-2 font-display text-3xl font-bold text-ink-900">
-                            {overview.published_courses}
-                        </p>
-                    </div>
-                    <div className="card p-6">
-                        <p className="eyebrow">Total enrollments</p>
-                        <p className="mt-2 font-display text-3xl font-bold text-ink-900">
-                            {overview.total_enrollments}
-                        </p>
-                    </div>
-                    <div className="card p-6">
-                        <p className="eyebrow">Total revenue</p>
-                        <p className="mt-2 font-display text-3xl font-bold text-ink-900">
-                            {formatPrice(overview.total_revenue)}
-                        </p>
-                    </div>
-                    <div className="card p-6">
-                        <p className="eyebrow">Average rating</p>
-                        <p className="mt-2 font-display text-3xl font-bold text-ink-900">
-                            {Number(overview.average_rating) > 0 ? `★ ${overview.average_rating}` : '—'}
-                        </p>
-                    </div>
-                </div>
-            )}
+            <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {overviewLoading &&
+                    Array.from({ length: 4 }, (_, i) => (
+                        <div key={i} className="card space-y-3 p-6">
+                            <Skeleton className="h-3 w-24" />
+                            <Skeleton className="h-8 w-16" />
+                        </div>
+                    ))}
+                {overview && (
+                    <>
+                        <div className="card p-6">
+                            <p className="eyebrow">Published courses</p>
+                            <p className="mt-2 font-display text-3xl font-bold text-ink-900">
+                                {overview.published_courses}
+                            </p>
+                        </div>
+                        <div className="card p-6">
+                            <p className="eyebrow">Total enrollments</p>
+                            <p className="mt-2 font-display text-3xl font-bold text-ink-900">
+                                {overview.total_enrollments}
+                            </p>
+                        </div>
+                        <div className="card p-6">
+                            <p className="eyebrow">Total revenue</p>
+                            <p className="mt-2 font-display text-3xl font-bold text-ink-900">
+                                {formatPrice(overview.total_revenue)}
+                            </p>
+                        </div>
+                        <div className="card p-6">
+                            <p className="eyebrow">Average rating</p>
+                            <p className="mt-2 font-display text-3xl font-bold text-ink-900">
+                                {Number(overview.average_rating) > 0 ? `★ ${overview.average_rating}` : '—'}
+                            </p>
+                        </div>
+                    </>
+                )}
+            </div>
 
             <h2 className="mt-10 mb-3 font-display text-lg font-semibold text-ink-900">Payouts</h2>
 
-            {payoutsLoading && <Loading />}
             {payouts && payouts.data.length === 0 && (
                 <p className="text-sm text-slate-500">No payouts yet — they're generated monthly from paid enrollments.</p>
             )}
 
             <div className="card divide-y divide-slate-100">
+                {payoutsLoading && Array.from({ length: 3 }, (_, i) => <SkeletonRow key={i} />)}
                 {payouts?.data.map((payout) => (
                     <div key={payout.id} className="flex items-center justify-between px-5 py-4">
                         <div>
@@ -86,6 +98,8 @@ export default function InstructorDashboardPage() {
                     </div>
                 ))}
             </div>
+
+            {payouts && <Pagination meta={payouts.meta} onPageChange={setPage} />}
         </div>
     );
 }

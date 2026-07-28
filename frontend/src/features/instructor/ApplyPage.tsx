@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import FormError from '../../components/FormError';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { applyServerErrors } from '../../lib/apiErrors';
 import { applyToTeach, fetchMyApplication } from '../../api/instructor';
 import { AUTH_QUERY_KEY, useAuthUser } from '../auth/useAuth';
@@ -51,7 +51,22 @@ export default function ApplyPage() {
         return <p className="text-slate-600">You're already an approved instructor.</p>;
     }
 
-    if (isLoading) return <Loading />;
+    if (isLoading) {
+        return (
+            <div className="max-w-lg space-y-4">
+                <Skeleton className="h-36 w-full !rounded-3xl" />
+                <div className="card space-y-3 p-6">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-3 w-40" />
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-3 w-32" />
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-11 w-32" />
+                </div>
+            </div>
+        );
+    }
 
     if (application && application.status === 'pending') {
         return (

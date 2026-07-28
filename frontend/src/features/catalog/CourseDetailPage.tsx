@@ -8,7 +8,7 @@ import { addToCart, fetchCart } from '../../api/commerce';
 import { createReview, deleteReview, fetchReviews, updateReview } from '../../api/reviews';
 import type { ReviewPayload } from '../../api/reviews';
 import { useAuthUser } from '../auth/useAuth';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
 import useDocumentMeta from '../../lib/useDocumentMeta';
@@ -81,7 +81,35 @@ export default function CourseDetailPage() {
 
     const [editingReview, setEditingReview] = useState<Review | null>(null);
 
-    if (isLoading) return <Loading />;
+    if (isLoading) {
+        return (
+            <div>
+                <Skeleton className="h-52 w-full !rounded-3xl" />
+                <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <div className="space-y-4 lg:col-span-2">
+                        <div className="card space-y-3 p-6">
+                            <Skeleton className="h-5 w-40" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-2/3" />
+                        </div>
+                        <div className="card overflow-hidden">
+                            {Array.from({ length: 4 }, (_, i) => (
+                                <div key={i} className="flex items-center justify-between px-5 py-3">
+                                    <Skeleton className="h-3 w-48" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="card space-y-3 p-5">
+                        <Skeleton className="aspect-video w-full" />
+                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-11 w-full" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (!course) return <p className="text-slate-500">Course not found.</p>;
 
     const curriculum = learn?.course;
@@ -224,11 +252,19 @@ export default function CourseDetailPage() {
                 </div>
 
                 <aside className="card sticky top-20 h-fit p-5">
-                    <div className="mb-4 flex aspect-video items-center justify-center rounded-xl bg-gradient-to-br from-brand-500/20 via-ink-800 to-ink-950">
-                        <span className="font-display text-4xl font-semibold text-white/20">
-                            {course.title?.[0]?.toUpperCase()}
-                        </span>
-                    </div>
+                    {course.thumbnail_url ? (
+                        <img
+                            src={course.thumbnail_url}
+                            alt=""
+                            className="mb-4 aspect-video w-full rounded-xl object-cover"
+                        />
+                    ) : (
+                        <div className="mb-4 flex aspect-video items-center justify-center rounded-xl bg-gradient-to-br from-brand-500/20 via-ink-800 to-ink-950">
+                            <span className="font-display text-4xl font-semibold text-white/20">
+                                {course.title?.[0]?.toUpperCase()}
+                            </span>
+                        </div>
+                    )}
                     <p className="font-display text-3xl font-bold text-ink-900">
                         {isFree ? 'Free' : formatPrice(course.price)}
                     </p>

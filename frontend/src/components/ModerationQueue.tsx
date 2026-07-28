@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import Loading from './Loading';
+import Pagination from './Pagination';
+import Skeleton from './Skeleton';
+import type { PaginationMeta } from '../types/api';
 
 interface ModerationQueueProps<T extends { id: number }> {
     eyebrow: string;
@@ -13,6 +15,8 @@ interface ModerationQueueProps<T extends { id: number }> {
     onReject: (id: number, reason: string) => void;
     renderHeader: (item: T) => ReactNode;
     renderDetails?: (item: T) => ReactNode;
+    meta?: PaginationMeta;
+    onPageChange?: (page: number) => void;
 }
 
 export default function ModerationQueue<T extends { id: number }>({
@@ -26,6 +30,8 @@ export default function ModerationQueue<T extends { id: number }>({
     onReject,
     renderHeader,
     renderDetails,
+    meta,
+    onPageChange,
 }: ModerationQueueProps<T>) {
     const [rejectingId, setRejectingId] = useState<number | null>(null);
     const [reason, setReason] = useState('');
@@ -36,10 +42,25 @@ export default function ModerationQueue<T extends { id: number }>({
             <h1 className="mt-1 font-display text-2xl font-semibold text-ink-900">{title}</h1>
             <p className="mt-1 text-sm text-slate-500">{description}</p>
 
-            {isLoading && <Loading className="mt-6" />}
             {items && items.length === 0 && <p className="mt-6 text-slate-500">{emptyMessage}</p>}
 
             <div className="mt-6 space-y-4">
+                {isLoading &&
+                    Array.from({ length: 3 }, (_, i) => (
+                        <div key={i} className="card space-y-3 p-4">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-48" />
+                                    <Skeleton className="h-3 w-32" />
+                                </div>
+                                <div className="flex shrink-0 gap-2">
+                                    <Skeleton className="h-9 w-24" />
+                                    <Skeleton className="h-9 w-24" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-3 w-full" />
+                        </div>
+                    ))}
                 {items?.map((item) => (
                     <div key={item.id} className="card p-4">
                         <div className="flex items-center justify-between">
@@ -89,6 +110,8 @@ export default function ModerationQueue<T extends { id: number }>({
                     </div>
                 ))}
             </div>
+
+            {meta && onPageChange && <Pagination meta={meta} onPageChange={onPageChange} />}
         </div>
     );
 }

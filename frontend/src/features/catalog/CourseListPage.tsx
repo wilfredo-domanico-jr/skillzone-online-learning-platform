@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import SkeletonCard from '../../components/SkeletonCard';
 import { fetchCategories, fetchCourses } from '../../api/catalog';
 import { formatPrice } from '../../lib/formatPrice';
 import useDocumentMeta from '../../lib/useDocumentMeta';
@@ -19,21 +20,32 @@ export default function CourseListPage() {
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState<'' | 'free' | 'paid'>('');
     const [sort, setSort] = useState<'' | 'price_asc' | 'price_desc' | 'rating'>('');
+    const [page, setPage] = useState(1);
 
     useDocumentMeta('Browse Courses', 'Browse our full catalog of courses across every category and skill level.');
 
     const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
 
     const { data, isLoading } = useQuery({
-        queryKey: ['courses', { search, category, price, sort }],
+        queryKey: ['courses', { search, category, price, sort, page }],
         queryFn: () =>
             fetchCourses({
                 search: search || undefined,
                 category: category || undefined,
                 price: price || undefined,
                 sort: sort || undefined,
+                page,
             }),
     });
+
+    const withFilterReset = <T,>(setter: (value: T) => void) => (value: T) => {
+        setter(value);
+        setPage(1);
+    };
+    const onSearchChange = withFilterReset(setSearch);
+    const onCategoryChange = withFilterReset(setCategory);
+    const onPriceChange = withFilterReset(setPrice);
+    const onSortChange = withFilterReset(setSort);
 
     return (
         <div>
@@ -62,7 +74,7 @@ export default function CourseListPage() {
                             type="search"
                             placeholder="Search courses…"
                             value={search}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
                             className="w-full bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
                         />
                     </div>
@@ -70,7 +82,7 @@ export default function CourseListPage() {
             </div>
 
             <div className="card mt-6 flex flex-wrap items-center gap-3 p-4">
-                <select value={category} onChange={(e: ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value)} className="input w-auto">
+                <select value={category} onChange={(e: ChangeEvent<HTMLSelectElement>) => onCategoryChange(e.target.value)} className="input w-auto">
                     <option value="">All categories</option>
                     {categories?.map((c) => (
                         <option key={c.id} value={c.slug}>
@@ -80,7 +92,7 @@ export default function CourseListPage() {
                 </select>
                 <select
                     value={price}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) => setPrice(e.target.value as '' | 'free' | 'paid')}
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => onPriceChange(e.target.value as '' | 'free' | 'paid')}
                     className="input w-auto"
                 >
                     <option value="">Any price</option>
@@ -90,7 +102,7 @@ export default function CourseListPage() {
                 <select
                     value={sort}
                     onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                        setSort(e.target.value as '' | 'price_asc' | 'price_desc' | 'rating')
+                        onSortChange(e.target.value as '' | 'price_asc' | 'price_desc' | 'rating')
                     }
                     className="input w-auto"
                 >
@@ -101,24 +113,33 @@ export default function CourseListPage() {
                 </select>
             </div>
 
-            {isLoading && <Loading label="Loading courses…" className="mt-8" />}
-
             {data && data.data.length === 0 && <p className="mt-8 text-slate-500">No courses found.</p>}
 
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {isLoading &&
+                    Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)}
                 {data?.data.map((course, i) => (
                     <Link
                         key={course.id}
                         to={`/courses/${course.slug}`}
                         className="card card-hover group block overflow-hidden"
                     >
-                        <div
-                            className={`aspect-video bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} flex items-center justify-center`}
-                        >
-                            <span className="font-display text-3xl font-semibold text-white/20">
-                                {course.title?.[0]?.toUpperCase()}
-                            </span>
-                        </div>
+                        {course.thumbnail_url ? (
+                            <img
+                                src={course.thumbnail_url}
+                                alt=""
+                                className="aspect-video w-full object-cover"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <div
+                                className={`aspect-video bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} flex items-center justify-center`}
+                            >
+                                <span className="font-display text-3xl font-semibold text-white/20">
+                                    {course.title?.[0]?.toUpperCase()}
+                                </span>
+                            </div>
+                        )}
                         <div className="p-4">
                             <h3 className="font-display font-semibold text-ink-900 group-hover:text-brand-700">
                                 {course.title}
@@ -143,6 +164,8 @@ export default function CourseListPage() {
                     </Link>
                 ))}
             </div>
+
+            {data && <Pagination meta={data.meta} onPageChange={setPage} />}
         </div>
     );
 }

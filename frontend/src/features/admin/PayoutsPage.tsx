@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAdminPayouts, markPayoutPaid } from '../../api/admin';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
@@ -9,11 +10,12 @@ import type { PayoutStatus } from '../../types/api';
 
 export default function PayoutsPage() {
     const [status, setStatus] = useState<PayoutStatus | ''>('pending');
+    const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
 
     const { data, isLoading } = useQuery({
-        queryKey: ['admin', 'payouts', status],
-        queryFn: () => fetchAdminPayouts({ status: status || undefined }),
+        queryKey: ['admin', 'payouts', status, page],
+        queryFn: () => fetchAdminPayouts({ status: status || undefined, page }),
     });
 
     const markPaid = useMutation({
@@ -29,7 +31,10 @@ export default function PayoutsPage() {
 
             <select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as PayoutStatus | '')}
+                onChange={(e) => {
+                    setStatus(e.target.value as PayoutStatus | '');
+                    setPage(1);
+                }}
                 className="input mt-6 mb-4 w-auto"
             >
                 <option value="pending">Pending</option>
@@ -38,10 +43,10 @@ export default function PayoutsPage() {
                 <option value="">All</option>
             </select>
 
-            {isLoading && <Loading />}
             {markPaid.isError && <p className="mb-2 text-sm text-red-600">{generalError(markPaid.error)}</p>}
 
             <div className="card divide-y divide-slate-100">
+                {isLoading && Array.from({ length: 5 }, (_, i) => <SkeletonRow key={i} />)}
                 {data?.data.map((payout) => (
                     <div key={payout.id} className="flex items-center justify-between px-4 py-3">
                         <div>
@@ -67,6 +72,8 @@ export default function PayoutsPage() {
                 ))}
                 {data && data.data.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No payouts found.</p>}
             </div>
+
+            {data && <Pagination meta={data.meta} onPageChange={setPage} />}
         </div>
     );
 }

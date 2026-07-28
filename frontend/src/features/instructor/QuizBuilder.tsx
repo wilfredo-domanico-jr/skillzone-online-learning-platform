@@ -8,6 +8,7 @@ import {
     updateQuestion,
 } from '../../api/quiz';
 import type { QuizQuestionPayload } from '../../api/quiz';
+import Skeleton from '../../components/Skeleton';
 import { DEFAULT_PASSING_SCORE_PERCENT } from '../../lib/constants';
 import type { QuizQuestion, QuizQuestionType } from '../../types/api';
 
@@ -70,7 +71,14 @@ export default function QuizBuilder({ lessonId }: QuizBuilderProps) {
         onSuccess: invalidateQuiz,
     });
 
-    if (isLoading) return <p className="text-xs text-slate-500">Loading quiz…</p>;
+    if (isLoading) {
+        return (
+            <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-16 w-full" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-4 text-sm">

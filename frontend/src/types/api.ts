@@ -29,6 +29,7 @@ export interface Course {
     title: string;
     subtitle?: string | null;
     description?: string | null;
+    thumbnail_url?: string | null;
     price: number | string;
     level?: CourseLevel;
     status: CourseStatus;

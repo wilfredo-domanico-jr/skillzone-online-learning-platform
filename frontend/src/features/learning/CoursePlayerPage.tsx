@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { completeLesson, fetchLearnCurriculum, saveLessonProgress } from '../../api/learning';
 import type { LearnCurriculum } from '../../api/learning';
 import { VIDEO_PROGRESS_SAVE_INTERVAL_SECONDS } from '../../lib/constants';
@@ -34,7 +34,28 @@ export default function CoursePlayerPage() {
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['courses', slug, 'curriculum'] });
     const complete = useMutation({ mutationFn: completeLesson, onSuccess: invalidate });
 
-    if (isLoading) return <Loading />;
+    if (isLoading) {
+        return (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+                <aside className="card overflow-hidden lg:col-span-1">
+                    <div className="space-y-2 border-b border-slate-100 px-4 py-3">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-2 w-full" />
+                    </div>
+                    <div className="space-y-3 p-3">
+                        {Array.from({ length: 5 }, (_, i) => (
+                            <Skeleton key={i} className="h-8 w-full" />
+                        ))}
+                    </div>
+                </aside>
+                <div className="card space-y-4 p-6 lg:col-span-3">
+                    <Skeleton className="aspect-video w-full" />
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+            </div>
+        );
+    }
     if (!data?.enrollment) {
         return <Navigate to={`/courses/${slug}`} replace />;
     }

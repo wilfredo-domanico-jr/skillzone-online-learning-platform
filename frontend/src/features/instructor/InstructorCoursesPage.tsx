@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import Skeleton from '../../components/Skeleton';
 import { createCourse, fetchMyCourses } from '../../api/instructor';
 import type { CourseStatus } from '../../types/api';
 
@@ -14,12 +15,13 @@ const STATUS_STYLES: Record<CourseStatus, string> = {
 
 export default function InstructorCoursesPage() {
     const [title, setTitle] = useState('');
+    const [page, setPage] = useState(1);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     const { data, isLoading } = useQuery({
-        queryKey: ['instructor', 'courses'],
-        queryFn: () => fetchMyCourses(),
+        queryKey: ['instructor', 'courses', page],
+        queryFn: () => fetchMyCourses({ page }),
     });
 
     const create = useMutation({
@@ -62,9 +64,14 @@ export default function InstructorCoursesPage() {
                 </button>
             </form>
 
-            {isLoading && <Loading className="mt-6" />}
-
             <div className="mt-6 space-y-3">
+                {isLoading &&
+                    Array.from({ length: 4 }, (_, i) => (
+                        <div key={i} className="card flex items-center justify-between p-4">
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-5 w-20" />
+                        </div>
+                    ))}
                 {data?.data.map((course) => (
                     <div key={course.id} className="card card-hover flex items-center justify-between p-4">
                         <Link
@@ -80,6 +87,8 @@ export default function InstructorCoursesPage() {
                     <p className="card p-4 text-slate-500">No courses yet — create your first one above.</p>
                 )}
             </div>
+
+            {data && <Pagination meta={data.meta} onPageChange={setPage} />}
         </div>
     );
 }

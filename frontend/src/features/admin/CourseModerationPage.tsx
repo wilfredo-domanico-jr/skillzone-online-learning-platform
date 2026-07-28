@@ -1,13 +1,15 @@
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import ModerationQueue from '../../components/ModerationQueue';
 import { approveCourse, fetchCoursesForModeration, rejectCourse } from '../../api/admin';
 
 export default function CourseModerationPage() {
+    const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
     const { data, isLoading } = useQuery({
-        queryKey: ['admin', 'courses', 'pending_review'],
-        queryFn: () => fetchCoursesForModeration({ status: 'pending_review' }),
+        queryKey: ['admin', 'courses', 'pending_review', page],
+        queryFn: () => fetchCoursesForModeration({ status: 'pending_review', page }),
     });
 
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin', 'courses'] });
@@ -25,6 +27,8 @@ export default function CourseModerationPage() {
             items={data?.data}
             isLoading={isLoading}
             emptyMessage="Nothing awaiting review."
+            meta={data?.meta}
+            onPageChange={setPage}
             onApprove={(id) => approve.mutate(id)}
             onReject={(id, reason) => reject.mutate({ id, reason })}
             renderHeader={(course) => (

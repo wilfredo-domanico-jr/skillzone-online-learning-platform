@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchQuizForLesson, startQuizAttempt, submitQuizAttempt } from '../../api/quiz';
 import type { QuizForLessonResponse } from '../../api/quiz';
+import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import type { QuizAttempt, QuizQuestion } from '../../types/api';
 
@@ -51,7 +52,14 @@ export default function QuizPlayer({ lessonId, onPassed }: QuizPlayerProps) {
         },
     });
 
-    if (isLoading) return <p className="text-sm text-slate-500">Loading quiz…</p>;
+    if (isLoading) {
+        return (
+            <div className="space-y-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-24 w-full" />
+            </div>
+        );
+    }
     if (!data?.quiz || questions.length === 0) {
         return <p className="text-sm text-slate-500">This quiz has no questions yet.</p>;
     }

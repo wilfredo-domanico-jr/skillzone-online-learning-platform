@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import SkeletonRow from '../../components/SkeletonRow';
 import { fetchAdminUsers, suspendUser, unsuspendUser } from '../../api/admin';
 import { useAuthUser } from '../auth/useAuth';
 import { generalError } from '../../lib/apiErrors';
 
 export default function UsersPage() {
     const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
     const { data: me } = useAuthUser();
 
     const { data, isLoading } = useQuery({
-        queryKey: ['admin', 'users', search],
-        queryFn: () => fetchAdminUsers({ search: search || undefined }),
+        queryKey: ['admin', 'users', search, page],
+        queryFn: () => fetchAdminUsers({ search: search || undefined, page }),
     });
 
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
@@ -28,15 +30,18 @@ export default function UsersPage() {
             <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                }}
                 placeholder="Search by name or email…"
                 className="input mt-6 mb-4 max-w-sm"
             />
 
-            {isLoading && <Loading />}
             {suspend.isError && <p className="mb-2 text-sm text-red-600">{generalError(suspend.error)}</p>}
 
             <div className="card divide-y divide-slate-100">
+                {isLoading && Array.from({ length: 5 }, (_, i) => <SkeletonRow key={i} />)}
                 {data?.data.map((u) => (
                     <div key={u.id} className="flex items-center justify-between px-4 py-3">
                         <div>
@@ -72,6 +77,8 @@ export default function UsersPage() {
                 ))}
                 {data && data.data.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">No users found.</p>}
             </div>
+
+            {data && <Pagination meta={data.meta} onPageChange={setPage} />}
         </div>
     );
 }

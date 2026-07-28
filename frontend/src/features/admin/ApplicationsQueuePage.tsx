@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ModerationQueue from '../../components/ModerationQueue';
 import {
@@ -7,10 +8,11 @@ import {
 } from '../../api/admin';
 
 export default function ApplicationsQueuePage() {
+    const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
     const { data, isLoading } = useQuery({
-        queryKey: ['admin', 'instructor-applications'],
-        queryFn: () => fetchInstructorApplications({ status: 'pending' }),
+        queryKey: ['admin', 'instructor-applications', page],
+        queryFn: () => fetchInstructorApplications({ status: 'pending', page }),
     });
 
     const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin', 'instructor-applications'] });
@@ -28,6 +30,8 @@ export default function ApplicationsQueuePage() {
             items={data?.data}
             isLoading={isLoading}
             emptyMessage="No pending applications."
+            meta={data?.meta}
+            onPageChange={setPage}
             onApprove={(id) => approve.mutate(id)}
             onReject={(id, reason) => reject.mutate({ id, reason })}
             renderHeader={(app) => (

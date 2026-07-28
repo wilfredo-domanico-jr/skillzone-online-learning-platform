@@ -8,7 +8,7 @@ import {
     validateCoupon,
     type CouponValidationResponse,
 } from '../../api/commerce';
-import Loading from '../../components/Loading';
+import Skeleton from '../../components/Skeleton';
 import { generalError } from '../../lib/apiErrors';
 import { formatPrice } from '../../lib/formatPrice';
 
@@ -37,7 +37,26 @@ export default function CartPage() {
         },
     });
 
-    if (isLoading) return <Loading />;
+    if (isLoading) {
+        return (
+            <div className="max-w-2xl">
+                <Skeleton className="mb-6 h-7 w-32" />
+                <div className="card divide-y divide-slate-100">
+                    {Array.from({ length: 3 }, (_, i) => (
+                        <div key={i} className="flex items-center justify-between px-5 py-4">
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-4 w-16" />
+                        </div>
+                    ))}
+                </div>
+                <div className="card mt-6 space-y-2 p-5">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+                <Skeleton className="mt-4 h-11 w-full" />
+            </div>
+        );
+    }
 
     const isEmpty = !cart || cart.items.length === 0;
 

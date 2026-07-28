@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
+import Skeleton from '../../components/Skeleton';
 import { fetchMyEnrollments } from '../../api/learning';
 
 export default function MyLearningPage() {
+    const [page, setPage] = useState(1);
     const { data, isLoading } = useQuery({
-        queryKey: ['my-enrollments'],
-        queryFn: () => fetchMyEnrollments(),
+        queryKey: ['my-enrollments', page],
+        queryFn: () => fetchMyEnrollments({ page }),
     });
 
     return (
@@ -20,7 +23,6 @@ export default function MyLearningPage() {
                 </div>
             </div>
 
-            {isLoading && <Loading className="mt-8" />}
             {data && data.data.length === 0 && (
                 <p className="mt-8 text-slate-500">
                     You haven't enrolled in any courses yet.{' '}
@@ -32,6 +34,15 @@ export default function MyLearningPage() {
             )}
 
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {isLoading &&
+                    Array.from({ length: 6 }, (_, i) => (
+                        <div key={i} className="card space-y-3 p-5">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-3 w-1/2" />
+                            <Skeleton className="h-2 w-full" />
+                            <Skeleton className="h-3 w-24" />
+                        </div>
+                    ))}
                 {data?.data.map((enrollment) => (
                     <Link
                         key={enrollment.id}
@@ -50,6 +61,8 @@ export default function MyLearningPage() {
                     </Link>
                 ))}
             </div>
+
+            {data && <Pagination meta={data.meta} onPageChange={setPage} />}
         </div>
     );
 }
